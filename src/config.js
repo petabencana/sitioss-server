@@ -64,7 +64,7 @@ export default {
   PGTIMEOUT: process.env.PGTIMEOUT || 10000,
   PGUSER: process.env.PGUSER || 'postgres',
   PORT: process.env.PORT || 8001,
-  REGION_CODES: (process.env.REGION_CODES || 'ID-JK, jbd,bdg,sby,srg').split(','),
+  REGION_CODES: (process.env.REGION_CODES || 'ID-JK,jbd,bdg,sby,srg').split(','),
   REPORT_TYPES: (process.env.REPORT_TYPES || 'drain,damage,power,treeclearing,flood,assessment').split(','),
   RESPONSE_TIME: process.env.RESPONSE_TIME === 'true' || false,
   SECURE_AUTH0: process.env.SECURE_AUTH0 === 'true' || false,
