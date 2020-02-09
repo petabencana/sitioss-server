@@ -16,8 +16,6 @@ import config from '../config';
 import apicache from 'apicache';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 
-const simplify = require('simplify-geometry');
-
 apicache.options({debug: config.LOG_LEVEL === 'debug',
                   statusCodes: {include: [200]}});
 let cache = apicache.middleware;
