@@ -8,7 +8,7 @@ import {Router} from 'express';
 import cities from './model';
 
 // Import any required utility functions
-import {cacheResponse, handleGeoResponse} from '../../../lib/util';
+import {cacheResponse, handleGeoResponse, checkIfPointInGeometry} from '../../../lib/util';
 
 // Import validation dependencies
 import Joi from 'joi';
@@ -37,6 +37,27 @@ export default ({config, db, logger}) => {
     }),
     (req, res, next) => cities(config, db, logger).all()
       .then((data) => handleGeoResponse(data, req, res, next))
+      .catch((err) => {
+        /* istanbul ignore next */
+        logger.error(err);
+        /* istanbul ignore next */
+        next(err);
+      })
+  );
+  api.get('/bounds', cacheResponse('1 day'),
+    validate({
+      query: {
+        city: Joi.any().valid(config.REGION_CODES),
+        lat: Joi.number().required(),
+        long: Joi.number().required(),
+        format: Joi.any().valid(config.FORMATS)
+          .default(config.FORMAT_DEFAULT),
+        geoformat: Joi.any().valid(config.GEO_FORMATS)
+          .default(config.GEO_FORMAT_DEFAULT),
+      },
+    }),
+    (req, res, next) => cities(config, db, logger).byID(req.query.city)
+      .then((data) => checkIfPointInGeometry(data, req, res, next))
       .catch((err) => {
         /* istanbul ignore next */
         logger.error(err);
