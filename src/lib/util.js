@@ -14,6 +14,10 @@ import config from '../config';
 
 // Caching
 import apicache from 'apicache';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+
+const simplify = require('simplify-geometry');
+
 apicache.options({debug: config.LOG_LEVEL === 'debug',
                   statusCodes: {include: [200]}});
 let cache = apicache.middleware;
@@ -60,12 +64,42 @@ const formatGeo = (body, outputFormat) => new Promise((resolve, reject) => {
   });
 });
 
+// Simplifies the geometry and converts to required format
+const simplifyGeoAndCheckPoint = (body, outputFormat, lat, long) => new Promise((resolve, reject) => {
+  // Check that body is an array, required by dbgeo.parse
+  if (Object.prototype.toString.call( body ) !== '[object Array]') {
+    body = [body]; // Force to array
+  }
+  dbgeo.parse(body, {outputFormat}, (err, formatted) => {
+    if (err) reject(err);
+    const isPointInCity = booleanPointInPolygon([long, lat], formatted['features'][0]['geometry']);
+    // formatted['features'][0]['geometry']['coordinates'] = simplified;
+    // console.log(formatted['features'][0]['properties']['name']);
+    resolve({'pointInCity': isPointInCity, 'cityName': formatted['features'][0]['properties']['name']});
+  });
+});
+
 // Handle a geo response, send back a correctly formatted json object with
 // status 200 or not found 404, catch and forward any errors in the process
 const handleGeoResponse = (data, req, res, next) => {
   return !data ?
     res.status(404).json({statusCode: 404, found: false, result: null}) :
       formatGeo(data, req.query.geoformat)
+        .then((formatted) => res.status(200).json({statusCode: 200,
+          result: formatted}))
+        /* istanbul ignore next */
+        .catch((err) => {
+          /* istanbul ignore next */
+          next(err);
+        });
+};
+
+// simplify geometry for response
+// status 200 or not found 404, catch and forward any errors in the process
+const checkIfPointInGeometry = (data, req, res, next) => {
+  return !data ?
+    res.status(404).json({statusCode: 404, found: false, result: null}) :
+      simplifyGeoAndCheckPoint(data, req.query.geoformat, req.query.lat, req.query.long)
         .then((formatted) => res.status(200).json({statusCode: 200,
           result: formatted}))
         /* istanbul ignore next */
@@ -83,5 +117,5 @@ const handleResponse = (data, req, res) => {
 };
 
 module.exports = {
-  cacheResponse, formatGeo, handleResponse, handleGeoResponse, jwtCheck,
+  cacheResponse, formatGeo, handleResponse, handleGeoResponse, jwtCheck, checkIfPointInGeometry,
 };
