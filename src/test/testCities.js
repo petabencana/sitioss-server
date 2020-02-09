@@ -16,7 +16,7 @@ export default function(app) {
   describe('Cities endpoint', function() {
     // Can get cities
     it('Return 200 for cities list', function(done) {
-        this.timeout(4000);
+        this.timeout(5000);
         test.httpAgent(app)
           .get('/cities')
           .expect(200)
