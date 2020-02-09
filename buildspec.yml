@@ -11,7 +11,7 @@ phases:
       - git clone https://github.com/petabencana/cognicity-schema.git && cd cognicity-schema && bash build/run.sh && cd ..
   build:
     commands:
-      - npm run test
+      # - npm run test
       - npm run build
   post_build:
     commands:
