@@ -8,7 +8,7 @@ phases:
     commands:
 #      - bash -c "$(curl -fsSL https://gist.githubusercontent.com/matthewberryman/af1fa1c5edca5a2056b957acf2a6815b/raw/2ee34a7aa4e5c796f9f8f6d4ac8ecb36c5f1bb48/aws-codebuild-extras.sh)"
       - su postgres -c "/usr/lib/postgresql/12/bin/postgres -D /var/lib/postgresql/12/main -c config_file=/etc/postgresql/12/main/postgresql.conf &"
-      - git clone --single-branch --branch ID_level_map https://github.com/petabencana/cognicity-schema.git && cd cognicity-schema && bash build/run.sh && cd ..
+      - git clone https://github.com/petabencana/cognicity-schema.git && cd cognicity-schema && bash build/run.sh && cd ..
   build:
     commands:
       - npm run test
