@@ -2,7 +2,7 @@
  * CogniCity Server /feeds endpoint
  * @module src/api/feeds/index
  **/
- import {Router} from 'express';
+import {Router} from 'express';
 
 // Import our data model
 import feeds from './model';
