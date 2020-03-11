@@ -119,6 +119,11 @@ export default ({config, db, logger}) => {
     params: {cardId: Joi.string().min(36).max(36).required()},
     body: Joi.object().keys({
       disaster_type: Joi.string().valid(config.DISASTER_TYPES).required(),
+      sub_submission: Joi.bool()
+      .when('disaster_type', {
+        is: 'earthquake',
+        then: Joi.required(),
+      }),
       card_data: Joi.object().keys({
         report_type: Joi.string().valid(config.REPORT_TYPES).required(),
         flood_depth: Joi.number().integer().min(0).max(200)
@@ -154,38 +159,33 @@ export default ({config, db, logger}) => {
         .then((card) => {
           // If the card does not exist then return an error message
           if (!card) {
-            res.status(404).json({statusCode: 404, cardId: req.params.cardId,
-            message: `No card exists with id '${req.params.cardId}'`});
+            res.status(404).json({
+              statusCode: 404, cardId: req.params.cardId,
+              message: `No card exists with id '${req.params.cardId}'`
+            });
           } else if (card && card.received) {
-            // If card already has received status then return an error message
-            res.status(409).json({statusCode: 409,
-            cardId: req.params.cardId, message: `Report already received for '+
-              ' card '${req.params.cardId}'`});
-          } else {
-            // We have a card and it has not yet had a report received
-            // Try and submit the report and update the card
-            cards(config, db, logger).submitReport(card, req.body)
-              .then((data) => {
-                // Submit a request to notify the user report received
-                notify.send(data)
-                  .then((data) => {
-                    logger.info('Notification request succesfully submitted');
-                  }).catch((err) => {
-                    logger.error(`Error with notification request.
-                      Response was ` + JSON.stringify(err));
-                  });
-                clearCache();
-                // Report success
-                res.status(200).json({statusCode: 200,
-                  cardId: req.params.cardId, created: true});
-              })
-              .catch((err) => {
-                /* istanbul ignore next */
-                logger.error(err);
-                /* istanbul ignore next */
-                next(err);
+            if (req.body.sub_submission && req.body.disaster_type == 'earthquake') {
+              // If card already has received status and disaster is earthquake add new card for other subtype
+              cards(config, db, logger).create({ username: card.username, network: card.network, language: card.language })
+                .then((data) => {
+                  data ?
+                    createReport(config, db, logger, {card_id: data.card_id}, req, notify, res, next)
+                    :
+                    next(new Error('Failed to create card'));
+                })
+                .catch((err) => {
+                  logger.error(err);
+                  next(err);
+                });
+            } else {
+              // If card already has received status then return an error message
+              res.status(409).json({
+                statusCode: 409,
+                cardId: req.params.cardId, message: `Report already received for '+
+              ' card '${req.params.cardId}'`
               });
-          }
+            }
+          } else createReport(config, db, logger, card, req, notify, res, next);
         });
       } catch (err) {
         /* istanbul ignore next */
@@ -294,3 +294,32 @@ export default ({config, db, logger}) => {
   );
   return api;
 };
+// eslint-disable-next-line require-jsdoc
+function createReport(config, db, logger, card, req, notify, res, next) {
+  {
+    cards(config, db, logger).submitReport(card, req.body)
+      .then((data) => {
+        // Submit a request to notify the user report received
+        notify.send(data)
+          .then((_data) => {
+            logger.info('Notification request succesfully submitted');
+          }).catch((err) => {
+            logger.error(`Error with notification request.
+                      Response was ` + JSON.stringify(err));
+          });
+        clearCache();
+        // Report success
+        res.status(200).json({
+        statusCode: 200,
+          cardId: req.params.cardId, created: true,
+        });
+      })
+      .catch((err) => {
+        /* istanbul ignore next */
+        logger.error(err);
+        /* istanbul ignore next */
+        next(err);
+      });
+  }
+}
+
