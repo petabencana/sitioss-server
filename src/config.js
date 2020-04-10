@@ -36,7 +36,7 @@ export default {
   CORS: process.env.CORS === 'true' || true,
   CORS_HEADERS: process.env.CORS_HEADERS || ['Link'],
   DAMAGE_COMPONENT: process.env.DAMAGE_COMPONENT || 'roof,walls,plinth,nonstructural'.split(','),
-  DISASTER_TYPES: (process.env.DISASTER_TYPES || 'flood,earthquake,prep,assessment').split(','),
+  DISASTER_TYPES: (process.env.DISASTER_TYPES || 'flood,earthquake,prep,assessment,fire,haze,volcano,wind').split(','),
   FORMAT_DEFAULT: process.env.FORMAT_DEFAULT || 'json',
   FORMATS: (process.env.FORMATS || 'json').split(','),
   GEO_FORMAT_DEFAULT: process.env.GEO_FORMAT_DEFAULT || 'topojson',
