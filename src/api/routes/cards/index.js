@@ -132,6 +132,85 @@ export default ({config, db, logger}) => {
           is: 'flood',
           then: Joi.required(),
         }),
+        impact: Joi.number().integer().min(0).max(5)
+        // impact required only when report_type = 'wind'
+        .when('report_type', {
+          is: 'wind',
+          then: Joi.required(),
+        }),
+        structureFailure: Joi.number().integer().min(0).max(7)
+        // structureFailure required only when report_type = 'structure'
+        .when('report_type', {
+          is: 'structure',
+          then: Joi.required(),
+        }),
+        accessabilityFailure: Joi.number().integer().min(0).max(7)
+        // accessabilityFailure required only when report_type = 'road'
+        .when('report_type', {
+          is: 'road',
+          then: Joi.required(),
+        }),
+        condition: Joi.number().integer().min(0).max(7)
+        // condition required only when report_type = 'road'
+        .when('report_type', {
+          is: 'road',
+          then: Joi.required(),
+        }),
+        visibility: Joi.number().integer().min(0).max(7)
+        // visibility required only when report_type = 'haze'
+        .when('report_type', {
+          is: 'haze',
+          then: Joi.required(),
+        }),
+        airQuality: Joi.number().integer().min(0).max(7)
+        // airQuality required only when report_type = 'haze'
+        .when('report_type', {
+          is: 'haze',
+          then: Joi.required(),
+        }),
+        fireDistance: Joi.number().min(0).max(1000)
+        // fireDistance required only when report_type = 'fire'
+        .when('report_type', {
+          is: 'fire',
+          then: Joi.required(),
+        }),
+        fireRadius: Joi.object().keys({
+          lat: Joi.number().min(-90).max(90).required(),
+          lng: Joi.number().min(-180).max(180).required(),
+        })
+        // fireRadius required only when report_type = 'fire'
+        .when('report_type', {
+          is: 'fire',
+          then: Joi.required(),
+        }),
+        fireLocation: Joi.object().keys({
+          lat: Joi.number().min(-90).max(90).required(),
+          lng: Joi.number().min(-180).max(180).required(),
+        })
+        // fireLocation required only when report_type = 'fire'
+        .when('report_type', {
+          is: 'fire',
+          then: Joi.required(),
+        }),
+
+        volcanicSigns: Joi.array().items(Joi.number().integer().min(0).max(7))
+        // volcanicSigns required only when report_type = 'volcano'
+        .when('report_type', {
+          is: 'volcano',
+          then: Joi.required(),
+        }),
+        evacuationNumber: Joi.number().integer().min(0).max(7)
+        // evacuationNumber required only when report_type = 'volcano'
+        .when('report_type', {
+          is: 'volcano',
+          then: Joi.required(),
+        }),
+        evacuationArea: Joi.bool()
+        // evacuationArea required only when report_type = 'volcano'
+        .when('report_type', {
+          is: 'volcano',
+          then: Joi.required(),
+        }),
         damages: Joi.array().items(Joi.object({
           component: Joi.string().valid(config.DAMAGE_COMPONENT).required(),
           severity: Joi.number().min(1).max(5).required(),
