@@ -14,17 +14,28 @@
  */
 export default (config, db, logger) => ({
   all: (timeperiod, city) => new Promise((resolve, reject) => {
+
     // Setup query
     let query = `SELECT pkey, created_at, source,
       status, url, image_url, disaster_type, report_data, tags, title, text,
       the_geom FROM ${config.TABLE_REPORTS}
-      WHERE created_at >= to_timestamp($1)
-      AND ($2 IS NULL OR tags->>'instance_region_code'=$2)
-      ORDER BY created_at DESC LIMIT $3`;
+      WHERE ((disaster_type = 'flood' AND created_at >= to_timestamp($1)) 
+      OR (disaster_type = 'earthquake' AND created_at >= to_timestamp($2))
+      OR (disaster_type = 'wind' AND created_at >= to_timestamp($3))
+      OR (disaster_type = 'haze' AND created_at >= to_timestamp($4))
+      OR (disaster_type = 'volcano' AND created_at >= to_timestamp($5))
+      OR (disaster_type = 'fire' AND created_at >= to_timestamp($6)) )
+      AND ($2 IS NULL OR tags->>'instance_region_code'=$7)
+      ORDER BY created_at DESC LIMIT $8`;
 
-    let timeWindow = (Date.now() / 1000) - timeperiod;
+    let floodTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.FLOOD_REPORTS_TIME_WINDOW);
+    let eqTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.EQ_REPORTS_TIME_WINDOW);
+    let hazeTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.HAZE_REPORTS_TIME_WINDOW);
+    let windTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.WIND_REPORTS_TIME_WINDOW);
+    let volcanoTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.VOLCANO_REPORTS_TIME_WINDOW);
+    let fireTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.FIRE_REPORTS_TIME_WINDOW);
 
-    let values = [timeWindow, city, config.API_REPORTS_LIMIT];
+    let values = [floodTimeWindow, eqTimeWindow, windTimeWindow, hazeTimeWindow, volcanoTimeWindow, fireTimeWindow, city, config.API_REPORTS_LIMIT];
 
     // Execute
     logger.debug(query, values);
