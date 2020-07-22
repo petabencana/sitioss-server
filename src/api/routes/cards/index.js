@@ -192,6 +192,15 @@ export default ({config, db, logger}) => {
           is: 'fire',
           then: Joi.required(),
         }),
+        personLocation: Joi.object().keys({
+          lat: Joi.number().min(-90).max(90).required(),
+          lng: Joi.number().min(-180).max(180).required(),
+        })
+        // personLocation required only when report_type = 'fire'
+        .when('report_type', {
+          is: 'fire',
+          then: Joi.required(),
+        }),
 
         volcanicSigns: Joi.array().items(Joi.number().integer().min(0).max(7))
         // volcanicSigns required only when report_type = 'volcano'
