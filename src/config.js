@@ -70,7 +70,7 @@ export default {
   PGTIMEOUT: process.env.PGTIMEOUT || 10000,
   PGUSER: process.env.PGUSER || 'postgres',
   PORT: process.env.PORT || 8001,
-  REGION_CODES: (process.env.REGION_CODES || 'ID-BA,ID-NB,ID-BT,ID-JT,ID-JB,ID-KT,ID-KS,ID-KB,ID-ST,ID-GO,ID-SA,ID-SN,ID-SG,ID-SR,ID-AC,ID-BE,ID-JA,ID-LA,ID-RI,ID-SB,ID-SS,ID-SU,ID-NT,ID-MA,ID-MU,ID-JI,ID-BB,ID-KR,ID-PA,ID-PB,ID-KI,ID-KU,ID-YO,ID-JK,jbd,bdg,sby,srg,PH-QC').split(','),
+  REGION_CODES: (process.env.REGION_CODES || 'ID-BA,ID-NB,ID-BT,ID-JT,ID-JB,ID-KT,ID-KS,ID-KB,ID-ST,ID-GO,ID-SA,ID-SN,ID-SG,ID-SR,ID-AC,ID-BE,ID-JA,ID-LA,ID-RI,ID-SB,ID-SS,ID-SU,ID-NT,ID-MA,ID-MU,ID-JI,ID-BB,ID-KR,ID-PA,ID-PB,ID-KI,ID-KU,ID-YO,ID-JK,jbd,bdg,sby,srg,PH-QC,PH-PG').split(','),
   REPORT_TYPES: (process.env.REPORT_TYPES || 'drain,damage,power,treeclearing,flood,assessment,earthquake,road,structure,fire,wind,volcano,haze').split(','),
   RESPONSE_TIME: process.env.RESPONSE_TIME === 'true' || false,
   SECURE_AUTH0: process.env.SECURE_AUTH0 === 'true' || false,
