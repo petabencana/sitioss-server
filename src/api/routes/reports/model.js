@@ -25,7 +25,7 @@ export default (config, db, logger) => ({
       OR (disaster_type = 'haze' AND created_at >= to_timestamp($4))
       OR (disaster_type = 'volcano' AND created_at >= to_timestamp($5))
       OR (disaster_type = 'fire' AND created_at >= to_timestamp($6)) )
-      AND ($2 IS NULL OR tags->>'instance_region_code'=$7)
+      AND ($7 IS NULL OR tags->>'instance_region_code'=$7)
       ORDER BY created_at DESC LIMIT $8`;
 
     let floodTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.FLOOD_REPORTS_TIME_WINDOW);
