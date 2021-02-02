@@ -92,6 +92,27 @@ const handleGeoResponse = (data, req, res, next) => {
         });
 };
 
+// Handle a geo or cap response, send back a correctly formatted json object with
+// status 200 or not found 404, catch and forward any errors in the process
+const handleGeoCapResponse = (data, req, res, cap, next) => {
+ return !data? 
+   res.status(404).json({statusCode: 404, found: false, result: null}) :
+   req.query.geoformat === 'cap' ?
+    // If CAP format has been required convert to geojson then to CAP
+    formatGeo(data, 'geojson')
+      .then((formatted) => res.status(200)
+        .set('Content-Type', 'text/xml')
+        .send(cap.geoJsonToAtomCap(formatted.features)))
+      /* istanbul ignore next */
+      .catch((err) => next(err)) :
+    // Otherwise hand off to geo formatter
+    formatGeo(data, req.query.geoformat)
+      .then((formatted) => res.status(200)
+        .json({statusCode: 200, result: formatted}))
+      /* istanbul ignore next */
+      .catch((err) => next(err));
+};
+
 // simplify geometry for response
 // status 200 or not found 404, catch and forward any errors in the process
 const checkIfPointInGeometry = (data, req, res, next) => {
@@ -115,5 +136,5 @@ const handleResponse = (data, req, res) => {
 };
 
 module.exports = {
-  cacheResponse, formatGeo, handleResponse, handleGeoResponse, jwtCheck, checkIfPointInGeometry,
+  cacheResponse, formatGeo, handleResponse, handleGeoResponse, handleGeoCapResponse, jwtCheck, checkIfPointInGeometry,
 };

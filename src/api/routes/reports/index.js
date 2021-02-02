@@ -12,7 +12,10 @@ import archive from './archive';
 import timeseries from './timeseries';
 
 // Import any required utility functions
-import {cacheResponse, handleGeoResponse} from '../../../lib/util';
+import {cacheResponse, handleGeoResponse, handleGeoCapResponse} from '../../../lib/util';
+
+// Cap formatter helper
+import Cap from '../../../lib/cap';
 
 // Import validation dependencies
 import Joi from 'joi';
@@ -28,7 +31,7 @@ import validate from 'celebrate';
  */
 export default ({config, db, logger}) => {
   let api = Router(); // eslint-disable-line new-cap
-
+  const cap = new Cap(config, logger); // Setup our cap formatter
   // Get a list of all reports
   api.get('/', cacheResponse('1 minute'),
     validate({
@@ -37,13 +40,13 @@ export default ({config, db, logger}) => {
         timeperiod: Joi.number().integer().positive()
           .max(config.API_REPORTS_TIME_WINDOW_MAX),
           // .default(config.API_REPORTS_TIME_WINDOW),
-        geoformat: Joi.any().valid(config.GEO_FORMATS)
+        geoformat: Joi.any().valid(['cap'].concat(config.GEO_FORMATS))
           .default(config.GEO_FORMAT_DEFAULT),
       },
     }),
     (req, res, next) => reports(config, db, logger)
                           .all(req.query.timeperiod, req.query.city)
-      .then((data) => handleGeoResponse(data, req, res, next))
+      .then((data) => handleGeoCapResponse(data, req, res, cap, next))
       .catch((err) => {
         /* istanbul ignore next */
         logger.error(err);
