@@ -11,7 +11,7 @@ export default {
   API_FEEDS_QLUE_CITIES: (process.env.API_FEEDS_QLUE_CITIES || 'jabodetabek,bandung,surabaya').split(','),
   API_FEEDS_QLUE_DISASTER_TYPES: (process.env.API_FEEDS_QLUE_DISASTER_TYPES || 'flood').split(','),
   API_FEEDS_DETIK_DISASTER_TYPES: (process.env.API_FEEDS_DEIK_DISASTER_TYPES || 'flood').split(','),
-  FLOOD_REPORTS_TIME_WINDOW: process.env.FLOOD_REPORTS_TIME_WINDOW || 7200, // 2 hr
+  FLOOD_REPORTS_TIME_WINDOW: process.env.FLOOD_REPORTS_TIME_WINDOW || 144000, // 2 hr
   EQ_REPORTS_TIME_WINDOW: process.env.EQ_REPORTS_TIME_WINDOW || 43200, // 12 hr
   WIND_REPORTS_TIME_WINDOW: process.env.WIND_REPORTS_TIME_WINDOW || 7200, // 2 hr
   HAZE_REPORTS_TIME_WINDOW: process.env.HAZE_REPORTS_TIME_WINDOW || 21600, // 6 hr
