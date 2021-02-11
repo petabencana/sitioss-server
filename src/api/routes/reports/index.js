@@ -36,7 +36,7 @@ export default ({config, db, logger}) => {
   api.get('/', cacheResponse('1 minute'),
     validate({
       query: {
-        city: Joi.any().valid(config.REGION_CODES),
+        admin: Joi.any().valid(config.REGION_CODES),
         timeperiod: Joi.number().integer().positive()
           .max(config.API_REPORTS_TIME_WINDOW_MAX),
           // .default(config.API_REPORTS_TIME_WINDOW),
