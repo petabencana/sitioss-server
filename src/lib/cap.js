@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 'use strict';
 /**
  * CogniCity CAP data format utility
@@ -41,6 +42,7 @@ module.exports = class Cap {
     };
 
     for (let feature of features) {
+      console.error(feature);
       let alert = self.createAlert( feature );
       // If alert creation failed, don't create the entry
       if (!alert) {
@@ -73,6 +75,53 @@ module.exports = class Cap {
     return builder.create( {feed: feed} ).end();
   }
 
+/**
+* Transform GeoJSON data to ATOM feed of CAP format XML data.
+* See {@link https://tools.ietf.org/html/rfc4287|ATOM syndication format}
+* @param {Object} features PetaBencana GeoJSON report features object
+* @return {String} XML CAP data describing all reports
+**/
+  geoJsonToReportAtomCap(features) {
+    let self = this;
+    let feed = {
+      '@xmlns': 'http://www.w3.org/2005/Atom',
+      'id': 'https://data.petabencana.id/reports',
+      'title': 'petabencana.id disaster reports',
+      'updated': moment().tz('Asia/Jakarta').format(),
+      'author': {
+        name: 'petabencana.id',
+        uri: 'https://petabencana.id/',
+      },
+    };
+
+    for (let feature of features) {
+      console.error(feature);
+      let alert = self.createReportAlert(feature);
+      // If alert creation failed, don't create the entry
+      if (!alert) {
+        continue;
+      }
+
+      if (!feed.entry) feed.entry = [];
+
+      feed.entry.push({
+        // Note, this ID does not resolve to a real resource
+        // - but enough information is contained in the URL
+        // that we could resolve the flooded report at the same point in time
+        id: 'https://data.petabencana.id/reports?city=' + feature.properties.tags.instance_region_code,
+        title: alert.identifier + ' Disasters in Indonesia',
+        updated: moment.tz(feature.properties.created_at, 'Asia/Jakarta'
+        ).format('YYYY-MM-DDTHH:mm:ssZ'),
+        content: {
+          '@type': 'text/xml',
+          'alert': alert,
+        },
+      });
+    }
+
+    return builder.create({feed: feed}).end();
+  }
+
   /**
    * Create CAP ALERT object.
    * See {@link `http://docs.oasis-open.org/emergency/cap/v1.2/`
@@ -103,6 +152,44 @@ module.exports = class Cap {
     alert.scope = 'Public';
 
     alert.info = self.createInfo( feature );
+    // If info creation failed, don't create the alert
+    if (!alert.info) {
+      return;
+    }
+
+    return alert;
+  }
+
+  /**
+   * Create CAP REPORT ALERT object.
+   * See {@link `http://docs.oasis-open.org/emergency/cap/v1.2/`
+                  + `CAP-v1.2-os.html#_Toc97699527|`
+                  + `CAP specification 3.2.1 "alert" Element and Sub-elements`}
+   * @param {Object} feature petabencana.id GeoJSON feature
+   * @return {Object} Object representing ALERT element for xmlbuilder
+   */
+  createReportAlert(feature) {
+    let self = this;
+
+    let alert = {};
+
+    alert['@xmlns'] = 'urn:oasis:names:tc:emergency:cap:1.2';
+
+    let identifier = feature.properties.pkey + '.'
+      + feature.properties.source + '.'
+      + moment.tz(feature.properties.created_at, 'Asia/Jakarta'
+      ).format('YYYY-MM-DDTHH:mm:ssZ');
+    identifier = identifier.replace(/ /g, '_');
+    alert.identifier = encodeURI(identifier);
+
+    alert.sender = feature.properties.source;
+    alert.sent = moment.tz(feature.properties.created_at,
+      self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
+    alert.status = 'Actual';
+    alert.msgType = 'Alert';
+    alert.scope = 'Public';
+
+    alert.info = feature.properties.report_data || {};
     // If info creation failed, don't create the alert
     if (!alert.info) {
       return;
@@ -175,6 +262,74 @@ module.exports = class Cap {
     info.expires = moment.tz(new Date().getTime()
                 + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
                   self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
+
+    return info;
+  }
+
+  /**
+   * Create a CAP Report INFO object.
+   * See {@link `http://docs.oasis-open.org/emergency/cap/v1.2/`
+                  + `CAP-v1.2-os.html#_Toc97699542|`
+                  + `CAP specification 3.2.2 "info" Element and Sub-elements`}
+   * @param {Object} feature petabencana.id GeoJSON feature
+   * @return {Object} Object representing INFO element suitable for xmlbuilder
+   */
+  createReportInfo(feature) {
+    let self = this;
+
+    let info = {};
+
+    info.category = 'Met';
+    info.event = 'FLOODING';
+    info.urgency = 'Immediate';
+
+    let severity = '';
+    let levelDescription = '';
+    if (feature.properties.state === 1) {
+      severity = 'Unknown';
+      levelDescription = 'AN UNKNOWN LEVEL OF FLOODING - USE CAUTION -';
+    } else if (feature.properties.state === 2) {
+      severity = 'Minor';
+      levelDescription = 'FLOODING OF BETWEEN 10 and 70 CENTIMETERS';
+    } else if (feature.properties.state === 3) {
+      severity = 'Moderate';
+      levelDescription = 'FLOODING OF BETWEEN 71 and 150 CENTIMETERS';
+    } else if (feature.properties.state === 4) {
+      severity = 'Severe';
+      levelDescription = 'FLOODING OF OVER 150 CENTIMETERS';
+    } else {
+      self.logger.silly('Cap: createInfo(): State '
+        + feature.properties.state
+        + ' cannot be resolved to a severity');
+      return;
+    }
+    info.severity = severity;
+
+    info.certainty = 'Observed';
+    info.senderName = 'JAKARTA EMERGENCY MANAGEMENT AGENCY';
+    info.headline = 'FLOOD WARNING';
+
+    let descriptionTime = moment(feature.properties.last_updated
+    ).tz('Asia/Jakarta').format('HH:mm z');
+    let descriptionArea = feature.properties.parent_name
+      + ', ' + feature.properties.area_name;
+    info.description = 'AT '
+      + descriptionTime
+      + ' THE JAKARTA EMERGENCY MANAGEMENT AGENCY OBSERVED '
+      + levelDescription + ' IN ' + descriptionArea + '.';
+
+    info.web = 'https://petabencana.id/';
+
+    info.area = self.createArea(feature);
+    // If area creation failed, don't create the info
+    if (!info.area) {
+      return;
+    }
+
+    // Add expiry time to information
+    info.expires = moment.tz(new Date().getTime()
+      + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
+      self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
 
     return info;
   }

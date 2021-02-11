@@ -102,7 +102,7 @@ const handleGeoCapResponse = (data, req, res, cap, next) => {
     formatGeo(data, 'geojson')
       .then((formatted) => res.status(200)
         .set('Content-Type', 'text/xml')
-        .send(cap.geoJsonToAtomCap(formatted.features)))
+        .send(cap.geoJsonToReportAtomCap(formatted.features)))
       /* istanbul ignore next */
       .catch((err) => next(err)) :
     // Otherwise hand off to geo formatter

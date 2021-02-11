@@ -42,10 +42,11 @@ export default ({config, db, logger}) => {
           // .default(config.API_REPORTS_TIME_WINDOW),
         geoformat: Joi.any().valid(['cap'].concat(config.GEO_FORMATS))
           .default(config.GEO_FORMAT_DEFAULT),
+        disaster: Joi.any().valid(config.DISASTER_TYPES)
       },
     }),
     (req, res, next) => reports(config, db, logger)
-                          .all(req.query.timeperiod, req.query.city)
+                          .all(req.query.timeperiod, req.query.city, req.query.disaster)
       .then((data) => handleGeoCapResponse(data, req, res, cap, next))
       .catch((err) => {
         /* istanbul ignore next */
