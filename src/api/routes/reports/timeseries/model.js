@@ -14,8 +14,8 @@
   */
 export default (config, db, logger) => ({
 
-  // Get all flood reports for a given city
-  count: (start, end, city) => new Promise((resolve, reject) => {
+  // Get all flood reports for a given admin boundary
+  count: (start, end, admin) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT ts, count(r.pkey)
     FROM generate_series(date_trunc('hour', $1::timestamp with time zone),
@@ -26,7 +26,7 @@ export default (config, db, logger) => ({
     GROUP BY ts ORDER BY ts`;
 
     // Setup values
-    let values = [start, end, city];
+    let values = [start, end, admin];
 
     // Execute
     logger.debug(query, values);

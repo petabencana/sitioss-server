@@ -13,7 +13,7 @@
  * @return {Object} Query methods
  */
 export default (config, db, logger) => ({
-  all: (timeperiod, city, disasterType) => new Promise((resolve, reject) => {
+  all: (timeperiod, admin, disasterType) => new Promise((resolve, reject) => {
 
     // Setup query
     let query = `SELECT pkey, created_at, source,
@@ -36,7 +36,7 @@ export default (config, db, logger) => ({
     let volcanoTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.VOLCANO_REPORTS_TIME_WINDOW);
     let fireTimeWindow = (Date.now() / 1000) - (timeperiod ? timeperiod : config.FIRE_REPORTS_TIME_WINDOW);
 
-    let values = [floodTimeWindow, eqTimeWindow, windTimeWindow, hazeTimeWindow, volcanoTimeWindow, fireTimeWindow, city, config.API_REPORTS_LIMIT, disasterType];
+    let values = [floodTimeWindow, eqTimeWindow, windTimeWindow, hazeTimeWindow, volcanoTimeWindow, fireTimeWindow, admin, config.API_REPORTS_LIMIT, disasterType];
 
     // Execute
     logger.debug(query, values);

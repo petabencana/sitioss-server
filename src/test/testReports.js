@@ -61,10 +61,10 @@ export default function(app, reportid, createdAt) {
          });
       });
 
-    // Can get reports by city
-    it('Get reports by city /reports?city=ID-JK', function(done) {
+    // Can get reports by admin voundary
+    it('Get reports by admin boundary /reports?admin=ID-JK', function(done) {
         test.httpAgent(app)
-          .get('/reports?city=ID-JK')
+          .get('/reports?admin=ID-JK')
           .expect(200)
           .expect('Content-Type', /json/)
           .end(function(err, res) {
@@ -76,10 +76,10 @@ export default function(app, reportid, createdAt) {
          });
       });
 
-    // Catch report by city error
-    it('Get reports by city /reports?city=xxx', function(done) {
+    // Catch report by admin boundary error
+    it('Get reports by admin boundary /reports?admin=xxx', function(done) {
         test.httpAgent(app)
-          .get('/reports?city=xxx')
+          .get('/reports?admin=xxx')
           .expect(400)
           .expect('Content-Type', /json/)
           .end(function(err, res) {

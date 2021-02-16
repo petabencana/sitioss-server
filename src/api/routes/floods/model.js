@@ -14,8 +14,8 @@
   */
 export default (config, db, logger) => ({
 
-  // Get all flooded areas for a given city
-  all: (city, minimumState) => new Promise((resolve, reject) => {
+  // Get all flooded areas for a given admin boundaries
+  all: (admin, minimumState) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT local_area as area_id, state, last_updated
       FROM ${config.TABLE_REM_STATUS} status, ${config.TABLE_LOCAL_AREAS} area
@@ -24,7 +24,7 @@ export default (config, db, logger) => ({
       AND ($1 IS NULL OR area.instance_region_code=$1)`;
 
     // Setup values
-    let values = [city, minimumState];
+    let values = [admin, minimumState];
 
     // Execute
     logger.debug(query, values);
@@ -38,8 +38,8 @@ export default (config, db, logger) => ({
       });
   }),
 
-  // Get all flooded areas for a given city
-  allGeo: (city, minimumState) => new Promise((resolve, reject) => {
+  // Get all flooded areas for a given admin boundary
+  allGeo: (admin, minimumState) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT la.the_geom, la.pkey as area_id, la.geom_id,
       la.area_name, la.parent_name, la.city_name, la.attributes,
@@ -52,7 +52,7 @@ export default (config, db, logger) => ({
       WHERE $1 IS NULL OR instance_region_code = $1`;
 
     // Setup values
-    let values = [city, minimumState];
+    let values = [admin, minimumState];
 
     // Execute
     logger.debug(query, values);

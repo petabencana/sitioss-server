@@ -29,10 +29,10 @@ export default function(app) {
          });
       });
 
-      // Catch invalid city in floodgauge
-      it('Return 400 for get /floodgauges?city=xxx', function(done) {
+      // Catch invalid admin boundary in floodgauge
+      it('Return 400 for get /floodgauges?admin=xxx', function(done) {
           test.httpAgent(app)
-            .get('/floodgauges?city=xxx')
+            .get('/floodgauges?admin=xxx')
             .expect(400)
             .expect('Content-Type', /json/)
             .end(function(err, res) {

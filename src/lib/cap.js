@@ -108,7 +108,7 @@ module.exports = class Cap {
         // Note, this ID does not resolve to a real resource
         // - but enough information is contained in the URL
         // that we could resolve the flooded report at the same point in time
-        id: 'https://data.petabencana.id/reports?city=' + feature.properties.tags.instance_region_code,
+        id: 'https://data.petabencana.id/reports?admin=' + feature.properties.tags.instance_region_code,
         title: alert.identifier + ' Disasters in Indonesia',
         updated: moment.tz(feature.properties.created_at, 'Asia/Jakarta'
         ).format('YYYY-MM-DDTHH:mm:ssZ'),

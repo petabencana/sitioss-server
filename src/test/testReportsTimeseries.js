@@ -34,10 +34,10 @@ export default function(app) {
          });
       });
 
-    // Can get reports between given timestamps with city
+    // Can get reports between given timestamps with admin boundary
     it('Can get floods timeseries given timestamps', function(done) {
         test.httpAgent(app)
-          .get('/reports/timeseries?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&city=ID-JK')
+          .get('/reports/timeseries?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&admin=ID-JK')
           .expect(200)
           .expect('Content-Type', /json/)
           .end(function(err, res) {
@@ -49,10 +49,10 @@ export default function(app) {
          });
       });
 
-    // Catches bad city name
-    it('Catches bad city name', function(done) {
+    // Catches bad admin boundary name
+    it('Catches bad admin boundary name', function(done) {
         test.httpAgent(app)
-          .get('/reports/timeseries?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&city=123')
+          .get('/reports/timeseries?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&admin=123')
           .expect(400)
           .expect('Content-Type', /json/)
           .end(function(err, res) {

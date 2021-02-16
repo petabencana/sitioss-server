@@ -25,7 +25,7 @@ import validate from 'celebrate';
 export default ({config, db, logger}) => {
   let api = Router(); // eslint-disable-line new-cap
 
-  // Get a list of infrastructure by type for a given city
+  // Get a list of infrastructure by type for a given administration boundary
   api.get('/', cacheResponse('1 day'),
     validate({
       query: {
@@ -47,7 +47,7 @@ export default ({config, db, logger}) => {
   api.get('/bounds', cacheResponse('1 day'),
     validate({
       query: {
-        city: Joi.any().valid(config.REGION_CODES),
+        admin: Joi.any().valid(config.REGION_CODES),
         lat: Joi.number().required(),
         long: Joi.number().required(),
         format: Joi.any().valid(config.FORMATS)
@@ -56,7 +56,7 @@ export default ({config, db, logger}) => {
           .default(config.GEO_FORMAT_DEFAULT),
       },
     }),
-    (req, res, next) => cities(config, db, logger).byID(req.query.city)
+    (req, res, next) => cities(config, db, logger).byID(req.query.admin)
       .then((data) => checkIfPointInGeometry(data, req, res, next))
       .catch((err) => {
         /* istanbul ignore next */

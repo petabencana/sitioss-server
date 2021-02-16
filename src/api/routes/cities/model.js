@@ -25,13 +25,13 @@ export default (config, db, logger) => ({
       .then((data) => resolve(data))
       .catch((err) => reject(err));
   }),
-  byID: (city) => new Promise((resolve, reject) => {
+  byID: (admin) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT code, name, the_geom
       FROM cognicity.instance_regions
       where code=$1 `
       ;
-    let values = [city];
+    let values = [admin];
     logger.debug(query, values);
     // Execute
     logger.debug(query);

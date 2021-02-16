@@ -14,8 +14,8 @@ import Promise from 'bluebird';
 */
 export default (config, db, logger) => ({
   // Return all flood gauge reports within the defined max period
-  // Optional: city (Petabencana.id Instance Region 3 letter code)
-  all: (city) => new Promise((resolve, reject) => {
+  // Optional: admin (Petabencana.id Instance Region 3 letter code)
+  all: (admin) => new Promise((resolve, reject) => {
     let query = `SELECT pkey, gaugeid, gaugenameid, the_geom,
       array_to_json(array_agg((measuredatetime, depth, warninglevel,
           warningnameid) ORDER BY measuredatetime ASC)) as observations
@@ -27,7 +27,7 @@ export default (config, db, logger) => ({
     // Setup values
     let timeWindow = (Date.now() / 1000) -
       config.API_FLOODGAUGE_REPORTS_TIME_WINDOW;
-    let values = [timeWindow, city, config.API_FLOODGAUGE_REPORTS_LIMIT];
+    let values = [timeWindow, admin, config.API_FLOODGAUGE_REPORTS_LIMIT];
 
     // Execute
     logger.debug(query, values);

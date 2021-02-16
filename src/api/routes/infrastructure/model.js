@@ -14,14 +14,14 @@ import Promise from 'bluebird';
  */
 export default (config, db, logger) => ({
   // A list of all infrastructure matching a given type
-  all: (city, type) => new Promise((resolve, reject) => {
+  all: (admin, type) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT name, tags, the_geom
       FROM infrastructure.${type}
       WHERE ($1 IS NULL OR tags->>'instance_region_code'=$1)`;
 
     // Setup values
-    let values = [city];
+    let values = [admin];
 
     // Execute
     logger.debug(query, values);

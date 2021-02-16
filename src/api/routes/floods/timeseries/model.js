@@ -14,8 +14,8 @@
   */
 export default (config, db, logger) => ({
 
-  // Get all flood reports for a given city
-  count: (start, end, city) => new Promise((resolve, reject) => {
+  // Get all flood reports for a given admin boundary
+  count: (start, end, admin) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT series.ts, count(series.local_area) 
       FROM
@@ -32,7 +32,7 @@ export default (config, db, logger) => ({
       ORDER BY series.ts`;
 
     // Setup values
-    let values = [start, end, city];
+    let values = [start, end, admin];
 
     // Execute
     logger.debug(query, values);

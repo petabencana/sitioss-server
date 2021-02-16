@@ -13,7 +13,7 @@ import Promise from 'bluebird';
  * @return {Object} Query methods
  */
 export default (config, db, logger) => ({
-  all: (start, end, city) => new Promise((resolve, reject) => {
+  all: (start, end, admin) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT pkey, created_at, source,
       status, url, image_url, disaster_type, report_data, tags, title, text,
@@ -25,7 +25,7 @@ export default (config, db, logger) => ({
 
     // var timeWindow = (Date.now() / 1000) - timeperiod;
 
-    let values = [start, end, city, config.API_REPORTS_LIMIT];
+    let values = [start, end, admin, config.API_REPORTS_LIMIT];
 
     // Execute
     logger.debug(query, values);
