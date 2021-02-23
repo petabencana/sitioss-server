@@ -306,6 +306,12 @@ module.exports = class Cap {
     info.severity = severity;
 
     info.certainty = 'Observed';
+
+    // Add expiry time to information
+    info.expires = moment.tz(new Date().getTime()
+    + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
+    self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
+  
     info.senderName = 'JAKARTA EMERGENCY MANAGEMENT AGENCY';
     info.headline = 'FLOOD WARNING';
 
@@ -326,10 +332,6 @@ module.exports = class Cap {
       return;
     }
 
-    // Add expiry time to information
-    info.expires = moment.tz(new Date().getTime()
-      + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
-      self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
 
     return info;
   }
