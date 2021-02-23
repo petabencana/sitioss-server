@@ -184,7 +184,7 @@ module.exports = class Cap {
 
     alert.sender = feature.properties.source;
     alert.sent = moment.tz(feature.properties.created_at,
-      self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
+    self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
     alert.status = 'Actual';
     alert.msgType = 'Alert';
     alert.scope = 'Public';
@@ -238,6 +238,10 @@ module.exports = class Cap {
     info.severity = severity;
 
     info.certainty = 'Observed';
+    // Add expiry time to information
+    info.expires = moment.tz(new Date().getTime()
+                + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
+                  self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
     info.senderName = 'JAKARTA EMERGENCY MANAGEMENT AGENCY';
     info.headline = 'FLOOD WARNING';
 
@@ -258,10 +262,7 @@ module.exports = class Cap {
       return;
     }
 
-    // Add expiry time to information
-    info.expires = moment.tz(new Date().getTime()
-                + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
-                  self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
+
 
     return info;
   }
