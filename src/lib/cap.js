@@ -10,6 +10,10 @@
 import builder from 'xmlbuilder';
 // moment module, JS date/time manipulation library
 import moment from 'moment-timezone';
+const SEVERE = 'Severe';
+const MINOR = 'Minor';
+const MODERATE = 'Moderate';
+const UNKNOWN = 'Unknown';
 // Cap class
 module.exports = class Cap {
   /**
@@ -25,7 +29,7 @@ module.exports = class Cap {
   /**
    * Transform GeoJSON data to ATOM feed of CAP format XML data.
    * See {@link https://tools.ietf.org/html/rfc4287|ATOM syndication format}
-   * @param {Object} features Peta Jakarta GeoJSON features object
+   * @param {Object} features PetaBencana GeoJSON features object
    * @return {String} XML CAP data describing all areas
    **/
   geoJsonToAtomCap(features) {
@@ -42,7 +46,6 @@ module.exports = class Cap {
     };
 
     for (let feature of features) {
-      console.error(feature);
       let alert = self.createAlert( feature );
       // If alert creation failed, don't create the entry
       if (!alert) {
@@ -189,7 +192,7 @@ module.exports = class Cap {
     alert.msgType = 'Alert';
     alert.scope = 'Public';
 
-    alert.info = feature.properties.report_data || {};
+    alert.info = this.createReportInfo(feature);
     // If info creation failed, don't create the alert
     if (!alert.info) {
       return;
@@ -279,33 +282,11 @@ module.exports = class Cap {
 
     let info = {};
 
-    info.category = 'Met';
-    info.event = 'FLOODING';
-    info.urgency = 'Immediate';
-
-    let severity = '';
-    let levelDescription = '';
-    if (feature.properties.state === 1) {
-      severity = 'Unknown';
-      levelDescription = 'AN UNKNOWN LEVEL OF FLOODING - USE CAUTION -';
-    } else if (feature.properties.state === 2) {
-      severity = 'Minor';
-      levelDescription = 'FLOODING OF BETWEEN 10 and 70 CENTIMETERS';
-    } else if (feature.properties.state === 3) {
-      severity = 'Moderate';
-      levelDescription = 'FLOODING OF BETWEEN 71 and 150 CENTIMETERS';
-    } else if (feature.properties.state === 4) {
-      severity = 'Severe';
-      levelDescription = 'FLOODING OF OVER 150 CENTIMETERS';
-    } else {
-      self.logger.silly('Cap: createInfo(): State '
-        + feature.properties.state
-        + ' cannot be resolved to a severity');
-      return;
-    }
-    info.severity = severity;
-
+    info.category = 'Geo';
+    info.event = feature.properties.disaster_type;
+    info.severity = self._getDisasterSevearity(feature);
     info.certainty = 'Observed';
+<<<<<<< Updated upstream
     info.senderName = 'JAKARTA EMERGENCY MANAGEMENT AGENCY';
     info.headline = 'FLOOD WARNING';
 
@@ -317,23 +298,156 @@ module.exports = class Cap {
       + descriptionTime
       + ' THE JAKARTA EMERGENCY MANAGEMENT AGENCY OBSERVED '
       + levelDescription + ' IN ' + descriptionArea + '.';
-
-    info.web = 'https://petabencana.id/';
-
-    info.area = self.createArea(feature);
-    // If area creation failed, don't create the info
-    if (!info.area) {
-      return;
-    }
+=======
 
     // Add expiry time to information
     info.expires = moment.tz(new Date().getTime()
       + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
       self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
+>>>>>>> Stashed changes
+
+    info.senderName = feature.properties.source;
+    info.headline = 'DISASTER WARNING';
+    info.description = feature.properties.text || "";
+    info.web = 'https://petabencana.id/';
+
+    info.parameter = [];
+    let report_data = feature.properties.report_data || {};
+    for (let key in report_data) {
+      info.parameter.push({
+        valueName: key,
+        value: report_data[key]
+      });
+    }
+
+<<<<<<< Updated upstream
+    // Add expiry time to information
+    info.expires = moment.tz(new Date().getTime()
+      + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
+      self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
+=======
+    
+    // info.area = self.createArea(feature);
+    // If area creation failed, don't create the info
+    // if (!info.area) {
+    //   return;
+    // }
+
+>>>>>>> Stashed changes
 
     return info;
   }
 
+  _getDisasterSevearity(feature) {
+    let disasterType = feature.properties.disaster_type;
+    let level = UNKNOWN;
+    let reportData = feature.properties.report_data;
+    switch (disasterType) {
+      case 'flood':
+        reportData = reportData || { 'flood_depth': 0 };
+        let depth = reportData.flood_depth || 0;
+        level = this._getFloodSevearity(depth);
+        break;
+      case 'earthquake':
+        let subType = feature.properties.report_data.report_type;
+        if (subType === 'road') {
+          reportData = reportData || { 'accessabilityFailure': 0 };
+          let accessability = reportData.accessabilityFailure || 0;
+          level = this._getAccessabilitySevearity(accessability);
+        } else if (subType === 'structure') {
+          reportData = reportData || { 'structureFailure': 0 };
+          let structureFailure = reportData.structureFailure || 0;
+          level = this._getStructureFailureSevearity(structureFailure);
+        }
+        break;
+      case 'haze':
+        switch (reportData.airQuality) {
+          case 0:
+            level = MINOR;
+            break;
+          case 1:
+            level = MINOR;
+            break;
+          case 2:
+            level = MODERATE;
+            break;
+          case 3:
+            level = SEVERE;
+            break;
+          case 4:
+            level = SEVERE;
+            break;
+          default:
+            level = UNKNOWN;
+            break;
+        }
+        break;
+      case 'wind':
+        reportData = reportData || { 'impact': 0 };
+        let impact = reportData.impact || 0;
+        level = this._getWindSevearity(impact);
+        break;
+      case 'volcano':
+        break;
+      case 'fire':
+        break;
+      default:
+        break;
+    }
+    return level;
+  }
+
+  _getWindSevearity(impact) {
+    // eslint-disable-next-line default-case
+    switch (String(impact)) {
+      case '0': return MINOR;
+      case '1': return MODERATE;
+      case '2': return SEVERE;
+    }
+  }
+
+  _getAQSevearity(aq) {
+    // eslint-disable-next-line default-case
+    switch (String(aq)) {
+      case '0': return MINOR;
+      case '1': return MINOR;
+      case '2': return MODERATE;
+      case '3': return SEVERE;
+      case '4': return SEVERE;
+    }
+  }
+
+
+  _getFloodSevearity(depth) {
+    if (depth <= 70) {
+      return MINOR;
+    } else if (depth <= 150) {
+      return MODERATE;
+    } else if (depth > 150) {
+      return SEVERE;
+    }
+  }
+
+  _getAccessabilitySevearity(accessability) {
+    // eslint-disable-next-line default-case
+    switch (accessability) {
+      case 0: return 'Very Severe';
+      case 1: return SEVERE;
+      case 2: return MODERATE;
+      case 3: return MODERATE;
+      case 4: return MINOR;
+    }
+  }
+
+  _getStructureFailureSevearity(structureFailure) {
+    if (structureFailure < 1) {
+      return MINOR;
+    } else if (structureFailure >= 1 && structureFailure < 2) {
+      return MODERATE;
+    } else if (structureFailure >= 2) {
+      return SEVERE;
+    }
+  }
   /**
    * Create a CAP AREA object.
    * See {@link `http://docs.oasis-open.org/emergency/cap/v1.2/`
