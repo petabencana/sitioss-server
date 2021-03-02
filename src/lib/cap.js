@@ -89,7 +89,7 @@ module.exports = class Cap {
     let feed = {
       '@xmlns': 'http://www.w3.org/2005/Atom',
       'id': 'https://data.petabencana.id/reports',
-      'title': 'petabencana.id disaster reports',
+      'title': 'Disaster Reports in Indonesia',
       'updated': moment().tz('Asia/Jakarta').format(),
       'author': {
         name: 'petabencana.id',
