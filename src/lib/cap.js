@@ -310,11 +310,10 @@ module.exports = class Cap {
     if (feature.properties.tags.instance_region_code) info.parameter.push({ valueName: "instance_region_code", value: feature.properties.tags.instance_region_code});
     
     let area = {};
-    // if (feature.coordinates) {
-    area.areaDesc = "Location of the disaster reported";
-    self.logger.error(feature);
-    area.circle =  feature.coordinates[1] + ',' + feature.coordinates[0] + ' 0' ;
-    // }
+    if (feature.geometry.coordinates) {
+      area.areaDesc = "Location of the disaster reported";
+      area.circle =  feature.geometry.coordinates[1] + ',' + feature.geometry.coordinates[0] + ' 0' ;
+    }
     info.area = area;
     // If area creation failed, don't create the info
     // if (!info.area) {
