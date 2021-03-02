@@ -284,8 +284,8 @@ module.exports = class Cap {
 
     info.category = 'Geo';
     info.event = feature.properties.disaster_type;
-    info.severity = self._getDisasterSevearity(feature);
     info.urgency = 'Immediate';
+    info.severity = self._getDisasterSevearity(feature);
     info.certainty = 'Observed';
 
     // Add expiry time to information
