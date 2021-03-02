@@ -111,7 +111,7 @@ module.exports = class Cap {
         // Note, this ID does not resolve to a real resource
         // - but enough information is contained in the URL
         // that we could resolve the flooded report at the same point in time
-        id: 'https://data.petabencana.id/reports?city=' + feature.properties.tags.instance_region_code,
+        id: 'https://data.petabencana.id/reports?admin=' + feature.properties.tags.instance_region_code,
         title: alert.identifier + ' Disasters in Indonesia',
         updated: moment.tz(feature.properties.created_at, 'Asia/Jakarta'
         ).format('YYYY-MM-DDTHH:mm:ssZ'),
@@ -306,9 +306,12 @@ module.exports = class Cap {
         value: report_data[key]
       });
     }
-
+    if (feature.properties.image_url) info.parameter.push({ valueName: "Image_url", value: feature.properties.image_url});
+    if (feature.properties.tags.instance_region_code) info.parameter.push({ valueName: "instance_region_code", value: feature.properties.tags.instance_region_code});
     
-    // info.area = self.createArea(feature);
+    let area = {};
+    if (feature.properties.coordinates) area.circle =  feature.properties.coordinates[1] + ',' + feature.properties.coordinates[0] + ' 0'
+    info.area = area;
     // If area creation failed, don't create the info
     // if (!info.area) {
     //   return;
