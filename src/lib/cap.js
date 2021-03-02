@@ -286,25 +286,11 @@ module.exports = class Cap {
     info.event = feature.properties.disaster_type;
     info.severity = self._getDisasterSevearity(feature);
     info.certainty = 'Observed';
-<<<<<<< Updated upstream
-    info.senderName = 'JAKARTA EMERGENCY MANAGEMENT AGENCY';
-    info.headline = 'FLOOD WARNING';
-
-    let descriptionTime = moment(feature.properties.last_updated
-    ).tz('Asia/Jakarta').format('HH:mm z');
-    let descriptionArea = feature.properties.parent_name
-      + ', ' + feature.properties.area_name;
-    info.description = 'AT '
-      + descriptionTime
-      + ' THE JAKARTA EMERGENCY MANAGEMENT AGENCY OBSERVED '
-      + levelDescription + ' IN ' + descriptionArea + '.';
-=======
 
     // Add expiry time to information
     info.expires = moment.tz(new Date().getTime()
       + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
       self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
->>>>>>> Stashed changes
 
     info.senderName = feature.properties.source;
     info.headline = 'DISASTER WARNING';
@@ -320,20 +306,12 @@ module.exports = class Cap {
       });
     }
 
-<<<<<<< Updated upstream
-    // Add expiry time to information
-    info.expires = moment.tz(new Date().getTime()
-      + self.config.CAP_DEFAULT_EXPIRE_SECONDS * 1000,
-      self.config.CAP_TIMEZONE).format('YYYY-MM-DDTHH:mm:ssZ');
-=======
     
     // info.area = self.createArea(feature);
     // If area creation failed, don't create the info
     // if (!info.area) {
     //   return;
     // }
-
->>>>>>> Stashed changes
 
     return info;
   }
