@@ -312,6 +312,7 @@ module.exports = class Cap {
     let area = {};
     // if (feature.coordinates) {
     area.areaDesc = "Location of the disaster reported";
+    self.logger.error(feature);
     area.circle =  feature.coordinates[1] + ',' + feature.coordinates[0] + ' 0' ;
     // }
     info.area = area;
