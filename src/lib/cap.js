@@ -311,8 +311,8 @@ module.exports = class Cap {
     
     let area = {};
     // if (feature.coordinates) {
+    area.areaDesc = "Location of the disaster reported";
     area.circle =  feature.coordinates[1] + ',' + feature.coordinates[0] + ' 0' ;
-    area.areaDesc = "Location of the disaster reported"
     // }
     info.area = area;
     // If area creation failed, don't create the info
