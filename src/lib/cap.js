@@ -302,7 +302,8 @@ module.exports = class Cap {
     let report_data = feature.properties.report_data || {};
     for (let key in report_data) {
       let value = report_data[key];
-      if (value.lat) value = value.lat + ', ' + value.lng; 
+      if (value.lat) value = value.lat + ', ' + value.lng;
+      if (Array.isArray(value)) value = value.join(',') 
       info.parameter.push({
         valueName: key,
         value: value
