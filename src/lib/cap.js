@@ -111,7 +111,7 @@ module.exports = class Cap {
         // Note, this ID does not resolve to a real resource
         // - but enough information is contained in the URL
         // that we could resolve the flooded report at the same point in time
-        id: 'https://data.petabencana.id/reports?admin=' + feature.properties.tags.instance_region_code,
+        id:  feature.properties.pkey,
         title: alert.identifier + ' Disasters in Indonesia',
         updated: moment.tz(feature.properties.created_at, 'Asia/Jakarta'
         ).format('YYYY-MM-DDTHH:mm:ssZ'),
@@ -296,7 +296,7 @@ module.exports = class Cap {
     info.senderName = feature.properties.source;
     info.headline = 'DISASTER WARNING';
     info.description = feature.properties.text || "";
-    info.web = 'https://petabencana.id/';
+    info.web = 'https://data.petabencana.id/reports?admin=' + feature.properties.tags.instance_region_code + '&disaster=' + feature.properties.disaster_type;
 
     info.parameter = [];
     let report_data = feature.properties.report_data || {};
