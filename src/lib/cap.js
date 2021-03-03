@@ -301,9 +301,11 @@ module.exports = class Cap {
     info.parameter = [];
     let report_data = feature.properties.report_data || {};
     for (let key in report_data) {
+      let value = report_data[key];
+      if (value.lat) value = value.lat + ', ' + value.lng; 
       info.parameter.push({
         valueName: key,
-        value: report_data[key]
+        value: value
       });
     }
     if (feature.properties.image_url) info.parameter.push({ valueName: "Image_url", value: feature.properties.image_url});
@@ -416,7 +418,7 @@ module.exports = class Cap {
   _getAccessabilitySevearity(accessability) {
     // eslint-disable-next-line default-case
     switch (accessability) {
-      case 0: return 'Very Severe';
+      case 0: return 'EXTREME';
       case 1: return SEVERE;
       case 2: return MODERATE;
       case 3: return MODERATE;
