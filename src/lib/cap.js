@@ -14,6 +14,7 @@ const SEVERE = 'Severe';
 const MINOR = 'Minor';
 const MODERATE = 'Moderate';
 const UNKNOWN = 'Unknown';
+const EXTREME = 'Extreme';
 // Cap class
 module.exports = class Cap {
   /**
@@ -351,19 +352,19 @@ module.exports = class Cap {
       case 'haze':
         switch (reportData.airQuality) {
           case 0:
-            level = MINOR;
-            break;
-          case 1:
-            level = MINOR;
-            break;
-          case 2:
             level = MODERATE;
             break;
-          case 3:
+          case 1:
+            level = MODERATE;
+            break;
+          case 2:
             level = SEVERE;
             break;
+          case 3:
+            level = EXTREME;
+            break;
           case 4:
-            level = SEVERE;
+            level = EXTREME;
             break;
           default:
             level = UNKNOWN;
@@ -419,7 +420,7 @@ module.exports = class Cap {
   _getAccessabilitySevearity(accessability) {
     // eslint-disable-next-line default-case
     switch (accessability) {
-      case 0: return 'EXTREME';
+      case 0: return EXTREME;
       case 1: return SEVERE;
       case 2: return MODERATE;
       case 3: return MODERATE;
