@@ -296,7 +296,7 @@ module.exports = class Cap {
 
     info.senderName = feature.properties.source;
     info.headline = 'DISASTER WARNING';
-    info.description = feature.properties.text || "";
+    info.description = encodeURI(feature.properties.text || "");
     info.web = 'https://data.petabencana.id/reports?admin=' + encodeURI(feature.properties.tags.instance_region_code) + '&disaster=' + encodeURI(feature.properties.disaster_type);
 
     info.parameter = [];
