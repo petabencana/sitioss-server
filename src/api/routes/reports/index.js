@@ -46,7 +46,7 @@ export default ({config, db, logger}) => {
       },
     }),
     (req, res, next) => reports(config, db, logger)
-                          .all(req.query.timeperiod, req.query.city, req.query.disaster)
+                          .all(req.query.timeperiod, req.query.admin, req.query.disaster)
       .then((data) => handleGeoCapResponse(data, req, res, cap, next))
       .catch((err) => {
         /* istanbul ignore next */

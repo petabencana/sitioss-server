@@ -38,9 +38,9 @@ export default function(app) {
          });
       });
 
-    it('Can get reports in given city', function(done) {
+    it('Can get reports in given admin boundary', function(done) {
         test.httpAgent(app)
-          .get('/reports/archive?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&city=ID-JK')
+          .get('/reports/archive?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&admin=ID-JK')
           .expect(200)
           .expect('Content-Type', /json/)
           .end(function(err, res) {
@@ -52,9 +52,9 @@ export default function(app) {
          });
       });
 
-    it('Catches bad city name', function(done) {
+    it('Catches bad admin boundary name', function(done) {
         test.httpAgent(app)
-          .get('/reports/archive?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&city=123')
+          .get('/reports/archive?start=2017-06-07T00:00:00%2B0700&end=2017-06-08T23:00:00%2B0700&admin=123')
           .expect(400)
           .expect('Content-Type', /json/)
           .end(function(err, res) {

@@ -68,7 +68,7 @@ export default ({config, db, logger}) => {
   api.get('/', cacheResponse(config.CACHE_DURATION_FLOODS),
     validate({
       query: {
-        city: Joi.any().valid(config.REGION_CODES),
+        admin: Joi.any().valid(config.REGION_CODES),
         format: Joi.any().valid(['xml'].concat(config.FORMATS))
                 .default(config.FORMAT_DEFAULT),
         geoformat: Joi.any().valid(['cap'].concat(config.GEO_FORMATS))
@@ -87,7 +87,7 @@ export default ({config, db, logger}) => {
             message: 'format must be \'json\' when geoformat '
                       +'IN (\'geojson\',\'topojson\')'});
       } else {
-        floods(config, db, logger).allGeo(req.query.city,
+        floods(config, db, logger).allGeo(req.query.admin,
         req.query.minimum_state)
         .then((data) =>
           req.query.geoformat === 'cap' ?
@@ -119,14 +119,14 @@ export default ({config, db, logger}) => {
   api.get('/states', cacheResponse(config.CACHE_DURATION_FLOODS_STATES),
     validate({
       query: {
-        city: Joi.any().valid(config.REGION_CODES),
+        admin: Joi.any().valid(config.REGION_CODES),
         format: Joi.any().valid(config.FORMATS).default(config.FORMAT_DEFAULT),
         minimum_state: Joi.number().integer().valid(Object.keys(REM_STATES)),
       },
     }),
     (req, res, next) => {
       req.apicacheGroup = CACHE_GROUP_FLOODS_STATES;
-      floods(config, db, logger).all(req.query.city, req.query.minimum_state)
+      floods(config, db, logger).all(req.query.admin, req.query.minimum_state)
         .then((data) => res.status(200).json({statusCode: 200, result: data}))
         .catch((err) => {
           /* istanbul ignore next */

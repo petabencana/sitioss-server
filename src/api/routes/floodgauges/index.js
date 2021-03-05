@@ -29,12 +29,12 @@ export default ({config, db, logger}) => {
   api.get('/', cacheResponse('1 minute'),
     validate({
       query: {
-        city: Joi.any().valid(config.REGION_CODES),
+        admin: Joi.any().valid(config.REGION_CODES),
         geoformat: Joi.any().valid(config.GEO_FORMATS)
           .default(config.GEO_FORMAT_DEFAULT),
       },
     }),
-    (req, res, next) => floodgauges(config, db, logger).all(req.query.city)
+    (req, res, next) => floodgauges(config, db, logger).all(req.query.admin)
       .then((data) => handleGeoResponse(data, req, res, next))
       .catch((err) => {
         /* istanbul ignore next */

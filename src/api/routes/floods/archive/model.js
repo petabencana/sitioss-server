@@ -15,7 +15,7 @@
 export default (config, db, logger) => ({
 
   // Get max state of all flood reports over time
-  maxstate: (start, end, city) => new Promise((resolve, reject) => {
+  maxstate: (start, end, admin) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT 
       mf.local_area AS area_id, 
@@ -29,7 +29,7 @@ export default (config, db, logger) => ({
       ($3 IS NULL OR la.instance_region_code = $3)`;
 
     // Setup values
-    let values = [start, end, city];
+    let values = [start, end, admin];
 
     // Execute
     logger.debug(query, values);

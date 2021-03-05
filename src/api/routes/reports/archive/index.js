@@ -31,7 +31,7 @@ export default ({config, db, logger}) => {
 
     validate({
       query: {
-        city: Joi.any().valid(config.REGION_CODES),
+        admin: Joi.any().valid(config.REGION_CODES),
         start: Joi.date().format('YYYY-MM-DDTHH:mm:ssZ').required(),
         end: Joi.date().format('YYYY-MM-DDTHH:mm:ssZ')
           .min(Joi.ref('start')).required(),
@@ -57,7 +57,7 @@ export default ({config, db, logger}) => {
         return;
       }
       archive(config, db, logger)
-      .all(req.query.start, req.query.end, req.query.city)
+      .all(req.query.start, req.query.end, req.query.admin)
       .then((data) => handleGeoResponse(data, req, res, next))
       .catch((err) => {
         /* istanbul ignore next */
