@@ -315,7 +315,7 @@ module.exports = class Cap {
     
     let area = {};
     if (feature.geometry.coordinates) {
-      area.areaDesc = "Location of the disaster reported";
+      area.areaDesc = "Location of the disaster reported in the area with code:" + encodeURI(feature.properties.tags.instance_region_code);
       area.circle =  feature.geometry.coordinates[1] + ',' + feature.geometry.coordinates[0] + ' 0' ;
     }
     info.area = area;
