@@ -16,9 +16,9 @@ export default (config, db, logger) => ({
   // Return all flood gauge reports within the defined max period
   // Optional: admin (Petabencana.id Instance Region 3 letter code)
   all: (admin) => new Promise((resolve, reject) => {
-    let query = `SELECT pkey, gaugeid, gaugenameid, the_geom,
+    let query = `SELECT gaugeid, gaugenameid, the_geom,
       array_to_json(array_agg((measuredatetime, depth, warninglevel,
-          warningnameid) ORDER BY measuredatetime ASC)) as observations
+          warningnameid) ORDER BY gaugeid ASC)) as observations
       FROM ${config.TABLE_FLOODGAUGE_REPORTS}
       WHERE measuredatetime >= to_timestamp($1)
       AND ($2 IS NULL OR tags->>'instance_region_code'=$2)
