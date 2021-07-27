@@ -22,7 +22,7 @@ export default (config, db, logger) => ({
       FROM ${config.TABLE_FLOODGAUGE_REPORTS}
       WHERE measuredatetime >= to_timestamp($1)
       AND ($2 IS NULL OR tags->>'instance_region_code'=$2)
-      GROUP BY pkey, gaugeid, the_geom, gaugenameid LIMIT $3`;
+      GROUP BY gaugeid, the_geom, gaugenameid LIMIT $3`;
 
     // Setup values
     let timeWindow = (Date.now() / 1000) -
