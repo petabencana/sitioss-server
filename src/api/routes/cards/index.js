@@ -126,6 +126,7 @@ export default ({config, db, logger}) => {
       // }),
       card_data: Joi.object().keys({
         report_type: Joi.string().valid(config.REPORT_TYPES).required(),
+        tweet_ID: Joi.string(),
         flood_depth: Joi.number().integer().min(0).max(200)
         // flood_depth required only when report_type = 'flood'
         .when('report_type', {
@@ -386,9 +387,9 @@ export default ({config, db, logger}) => {
 function createReport(config, db, logger, card, req, notify, res, next) {
   {
     cards(config, db, logger).submitReport(card, req.body)
-      .then((data) => {
+      .then((data, tweetID) => {
         // Submit a request to notify the user report received
-        notify.send(data)
+        notify.send(data, tweetID)
           .then((_data) => {
             logger.info('Notification request succesfully submitted');
           }).catch((err) => {
