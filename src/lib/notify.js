@@ -35,6 +35,7 @@ export default class Notify {
             body.userId = body.username;
             body.tweetID = tweetID;
             delete(body.username);
+            this.logger.debug("Sending notify request "+ endpoint + " with apikey: "+this.apikey);
             // Request notification
             this.axios.post(endpoint, body,
                 {'headers': {'x-api-key': this.apikey}})
