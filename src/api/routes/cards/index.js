@@ -119,6 +119,7 @@ export default ({config, db, logger}) => {
     params: {cardId: Joi.string().min(36).max(36).required()},
     body: Joi.object().keys({
       disaster_type: Joi.string().valid(config.DISASTER_TYPES).required(),
+      tweetID: Joi.string(),
       sub_submission: Joi.bool().required(),
       // .when('disaster_type', {
       //   is: 'earthquake',
@@ -126,7 +127,6 @@ export default ({config, db, logger}) => {
       // }),
       card_data: Joi.object().keys({
         report_type: Joi.string().valid(config.REPORT_TYPES).required(),
-        tweet_ID: Joi.string(),
         flood_depth: Joi.number().integer().min(0).max(200)
         // flood_depth required only when report_type = 'flood'
         .when('report_type', {

@@ -115,7 +115,7 @@ export default (config, db, logger) => ({
         t.oneOrNone(query.query, query.values)));
     }).timeout(config.PGTIMEOUT)
       // return result from push function query
-      .then((data) => resolve(JSON.parse(data[3].notify), body.tweet_ID))
+      .then((data) => resolve(JSON.parse(data[3].notify), body.tweetID))
       /* istanbul ignore next */
       .catch((err) => {
         /* istanbul ignore next */
