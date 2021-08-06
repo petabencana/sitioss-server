@@ -27,15 +27,14 @@ export default class Notify {
      * @param {String} body.network - social network
      * @return {Promise} - response
      */
-    send(body, tweetID) {
+    send(body) {
         return new Promise((resolve, reject) => {
             // Construct endpoint
             const endpoint = this.endpoint + body.network + '/send/';
             // Re-map username to userId as required by Lambda service
             body.userId = body.username;
-            body.tweetID = tweetID;
+            this.logger.debug(body);
             delete(body.username);
-            this.logger.debug("Sending notify request "+ endpoint + " with apikey: "+this.apikey);
             // Request notification
             this.axios.post(endpoint, body,
                 {'headers': {'x-api-key': this.apikey}})

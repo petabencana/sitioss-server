@@ -387,9 +387,10 @@ export default ({config, db, logger}) => {
 function createReport(config, db, logger, card, req, notify, res, next) {
   {
     cards(config, db, logger).submitReport(card, req.body)
-      .then((data, tweetID) => {
+      .then((data) => {
+        logger.debug(data);
         // Submit a request to notify the user report received
-        notify.send(data, tweetID)
+        notify.send(data)
           .then((_data) => {
             logger.info('Notification request succesfully submitted');
           }).catch((err) => {
