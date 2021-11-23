@@ -57,7 +57,7 @@ export default ({config, db, logger}) => {
       }
 
       timeseries(config, db, logger)
-      .count(req.query.start, req.query.end, req.query.admin)
+        .count(req.query.start, req.query.end, req.query.admin, req.query.parent)
         .then((data) => res.status(200).json({statusCode: 200, result: data}))
         .catch((err) => {
           /* istanbul ignore next */
