@@ -62,6 +62,9 @@ export default ({config, db, logger}) => {
         username: Joi.string().required(),
         network: Joi.string().required(),
         language: Joi.string().required(),
+        network_data: Joi.object().keys({
+          tweetID: Joi.string(),
+        }),
       }),
     }),
     (req, res, next) => {
@@ -87,6 +90,22 @@ export default ({config, db, logger}) => {
       req.apicacheGroup = CACHE_GROUP_CARDS;
       cards(config, db, logger).byCardId(req.params.cardId)
         .then((data) => data ? res.status(200).end() : res.status(404).end())
+        .catch((err) => {
+          /* istanbul ignore next */
+          logger.error(err);
+          /* istanbul ignore next */
+          next(err);
+        });
+    }
+  );
+
+  // Get all active report cards
+  api.get('/activecards',
+    (req, res, next) => {
+      cards(config, db, logger).getAllActiveCards()
+        .then((data) => {
+          handleResponse(data, req, res, next);
+        })
         .catch((err) => {
           /* istanbul ignore next */
           logger.error(err);
@@ -250,12 +269,12 @@ export default ({config, db, logger}) => {
           if (!card) {
             res.status(404).json({
               statusCode: 404, cardId: req.params.cardId,
-              message: `No card exists with id '${req.params.cardId}'`
+              message: `No card exists with id '${req.params.cardId}'`,
             });
           } else if (card && card.received) {
             if (req.body.sub_submission && req.body.disaster_type == 'earthquake') {
               // If card already has received status and disaster is earthquake add new card for other subtype
-              cards(config, db, logger).create({ username: card.username, network: card.network, language: card.language })
+              cards(config, db, logger).create({username: card.username, network: card.network, language: card.language})
                 .then((data) => {
                   data ?
                     createReport(config, db, logger, {card_id: data.card_id}, req, notify, res, next)
@@ -271,7 +290,7 @@ export default ({config, db, logger}) => {
               res.status(409).json({
                 statusCode: 409,
                 cardId: req.params.cardId, message: `Report already received for '+
-              ' card '${req.params.cardId}'`
+              ' card '${req.params.cardId}'`,
               });
             }
           } else createReport(config, db, logger, card, req, notify, res, next);

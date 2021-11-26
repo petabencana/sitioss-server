@@ -2,7 +2,7 @@
  * CogniCity Server /cards data model
  * @module src/api/cards/model
  **/
-import Promise from 'bluebird';
+import Promise, { reject, resolve } from 'bluebird';
 
 /**
 * Database interaction for Cards objects
@@ -17,11 +17,11 @@ export default (config, db, logger) => ({
   create: (body) => new Promise((resolve, reject) => {
     // Setup query
     let query = `INSERT INTO ${config.TABLE_GRASP_CARDS}
-      (username, network, language, received)
-      VALUES ($1, $2, $3, $4) RETURNING card_id`;
+      (username, network, language, received, network_data)
+      VALUES ($1, $2, $3, $4, $5) RETURNING card_id`;
 
     // Setup values
-    let values = [body.username, body.network, body.language, false];
+    let values = [body.username, body.network, body.language, false, body.network_data || {}];
 
     // Execute
     logger.debug(query, values);
@@ -125,6 +125,30 @@ export default (config, db, logger) => ({
         reject(err);
       });
   }),
+
+  // All active reports
+  getAllActiveCards: () => new Promise((resolve, reject) => {
+    // eslint-disable-next-line max-len
+    let query = `SELECT c.card_id, c.username, c.network, c.language, c.network_data,
+      c.received, CASE WHEN r.card_id IS NOT NULL THEN
+        json_build_object('created_at', r.created_at, 'disaster_type',
+        r.disaster_type, 'text', r.text, 'card_data', r.card_data, 'image_url',
+        r.image_url, 'status', r.status)
+      ELSE null END AS report
+      FROM ${config.TABLE_GRASP_CARDS} c
+      LEFT JOIN ${config.TABLE_GRASP_REPORTS} r USING (card_id)
+      WHERE r.created_at >= to_timestamp($1)`;
+    let values = [(Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW];
+    // Execute
+    logger.debug(query, values);
+    db.any(query, values).timeout(config.PGTIMEOUT)
+      .then((data) => resolve(data))
+      /* istanbul ignore next */
+      .catch((err) => {
+        /* istanbul ignore next */
+        reject(err);
+      });
+    }),
 
   // Update the reports table with new report details
   updateReport: (card, body) => new Promise((resolve, reject) => {
