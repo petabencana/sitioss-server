@@ -99,10 +99,10 @@ export default ({config, db, logger}) => {
     }
   );
 
-  // Get all active report cards
-  api.get('/activecards',
+  // Get all just expired report cards
+  api.get('/expiredcards',
     (req, res, next) => {
-      cards(config, db, logger).getAllActiveCards()
+      cards(config, db, logger).expiredCards()
         .then((data) => {
           handleResponse(data, req, res, next);
         })

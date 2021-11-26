@@ -126,8 +126,8 @@ export default (config, db, logger) => ({
       });
   }),
 
-  // All active reports
-  getAllActiveCards: () => new Promise((resolve, reject) => {
+  // All just expired report cards
+  expiredCards: () => new Promise((resolve, reject) => {
     // eslint-disable-next-line max-len
     let query = `SELECT c.card_id, c.username, c.network, c.language, c.network_data,
       c.received, CASE WHEN r.card_id IS NOT NULL THEN
@@ -137,8 +137,9 @@ export default (config, db, logger) => ({
       ELSE null END AS report
       FROM ${config.TABLE_GRASP_CARDS} c
       LEFT JOIN ${config.TABLE_GRASP_REPORTS} r USING (card_id)
-      WHERE r.created_at >= to_timestamp($1)`;
-    let values = [(Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW];
+      WHERE r.created_at >= to_timestamp($1) AND 
+      r.created_at <= to_timestamp($2)`;
+    let values = [(Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW, (Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW + 1800];
     // Execute
     logger.debug(query, values);
     db.any(query, values).timeout(config.PGTIMEOUT)
