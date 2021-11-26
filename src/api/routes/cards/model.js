@@ -139,7 +139,7 @@ export default (config, db, logger) => ({
       LEFT JOIN ${config.TABLE_GRASP_REPORTS} r USING (card_id)
       WHERE r.created_at >= to_timestamp($1) AND 
       r.created_at <= to_timestamp($2)`;
-    let values = [(Date.now() / 1000) - 21600 + 10800, (Date.now() / 1000) ];
+    let values = [(Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW + 1800, (Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW];
     // Execute
     logger.debug(query, values);
     db.any(query, values).timeout(config.PGTIMEOUT)
