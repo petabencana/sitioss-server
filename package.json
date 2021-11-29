@@ -70,7 +70,7 @@
     "morgan": "^1.9.1",
     "ngx-captcha": "^9.0.1",
     "node-pre-gyp": "^0.10.0",
-    "pg-promise": "^10.7.5",
+    "pg-promise": "^8.4.4",
     "response-time": "^2.3.2",
     "shortid": "^2.2.8",
     "winston": "^2.3.1",
