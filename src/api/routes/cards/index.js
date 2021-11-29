@@ -409,6 +409,7 @@ function createReport(config, db, logger, card, req, notify, res, next) {
     cards(config, db, logger).submitReport(card, req.body)
       .then((data) => {
         logger.debug(data);
+        data.card = card;
         // Submit a request to notify the user report received
         notify.send(data)
           .then((_data) => {
