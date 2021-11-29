@@ -64,6 +64,7 @@ export default ({config, db, logger}) => {
         language: Joi.string().required(),
         network_data: Joi.object().keys({
           tweetID: Joi.string(),
+          chatID: Joi.string(),
         }),
       }),
     }),
