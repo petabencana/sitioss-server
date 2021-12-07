@@ -68,6 +68,7 @@
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.13",
     "morgan": "^1.9.1",
+    "ngx-captcha": "^9.0.1",
     "node-pre-gyp": "^0.10.0",
     "pg-promise": "^8.4.4",
     "response-time": "^2.3.2",

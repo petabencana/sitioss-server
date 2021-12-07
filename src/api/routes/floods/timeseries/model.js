@@ -15,7 +15,7 @@
 export default (config, db, logger) => ({
 
   // Get all flood reports for a given admin boundary
-  count: (start, end, admin) => new Promise((resolve, reject) => {
+  count: (start, end, admin, parent) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT series.ts, count(series.local_area) 
       FROM
@@ -27,7 +27,8 @@ export default (config, db, logger) => ({
       ${config.TABLE_LOCAL_AREAS} AS la
       WHERE 
         series.local_area = la.pkey AND
-        ($3 IS NULL OR la.instance_region_code = $3)
+        ($3 IS NULL OR la.instance_region_code = $3) AND
+        ($4 IS NULL OR la.city_name = $4)
       GROUP BY series.ts 
       ORDER BY series.ts`;
 

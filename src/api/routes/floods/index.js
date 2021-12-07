@@ -69,11 +69,12 @@ export default ({config, db, logger}) => {
     validate({
       query: {
         admin: Joi.any().valid(config.REGION_CODES),
+        parent: Joi.string().allow(null, ''),
         format: Joi.any().valid(['xml'].concat(config.FORMATS))
                 .default(config.FORMAT_DEFAULT),
         geoformat: Joi.any().valid(['cap'].concat(config.GEO_FORMATS))
                 .default(config.GEO_FORMAT_DEFAULT),
-        minimum_state: Joi.number().integer().valid(Object.keys(REM_STATES)),
+        minimum_state: Joi.number().integer().valid(Object.keys(REM_STATES)).allow(null, ''),
       },
     }),
     (req, res, next) => {
@@ -88,7 +89,7 @@ export default ({config, db, logger}) => {
                       +'IN (\'geojson\',\'topojson\')'});
       } else {
         floods(config, db, logger).allGeo(req.query.admin,
-        req.query.minimum_state)
+        req.query.minimum_state || null, req.query.parent || null)
         .then((data) =>
           req.query.geoformat === 'cap' ?
             // If CAP format has been required convert to geojson then to CAP
@@ -127,6 +128,27 @@ export default ({config, db, logger}) => {
     (req, res, next) => {
       req.apicacheGroup = CACHE_GROUP_FLOODS_STATES;
       floods(config, db, logger).all(req.query.admin, req.query.minimum_state)
+        .then((data) => res.status(200).json({statusCode: 200, result: data}))
+        .catch((err) => {
+          /* istanbul ignore next */
+          logger.error(err);
+          /* istanbul ignore next */
+          next(err);
+        });
+    }
+  );
+
+  // Just get Districts, SubDistricts and Villages without geographic boundaries
+
+  api.get('/places', cacheResponse(config.CACHE_DURATION_FLOODS_STATES),
+    validate({
+      query: {
+        admin: Joi.any().valid(config.REGION_CODES)
+      },
+    }),
+    (req, res, next) => {
+      req.apicacheGroup = CACHE_GROUP_FLOODS_STATES;
+      floods(config, db, logger).allPlaces(req.query.admin, req.query.minimum_state)
         .then((data) => res.status(200).json({statusCode: 200, result: data}))
         .catch((err) => {
           /* istanbul ignore next */
