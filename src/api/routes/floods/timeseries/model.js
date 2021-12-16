@@ -33,7 +33,7 @@ export default (config, db, logger) => ({
       ORDER BY series.ts`;
 
     // Setup values
-    let values = [start, end, admin];
+    let values = [start, end, admin, parent];
 
     // Execute
     logger.debug(query, values);
