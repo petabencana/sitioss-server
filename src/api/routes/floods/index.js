@@ -160,7 +160,7 @@ export default ({config, db, logger}) => {
   );
 
   // Update the flood status of a local area
-  api.put('/:localAreaId', jwtCheck,
+  api.put('/:localAreaId',
     validate({
       params: {localAreaId: Joi.number().integer().required()},
       body: Joi.object().keys({
