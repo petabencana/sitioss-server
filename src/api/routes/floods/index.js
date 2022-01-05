@@ -143,7 +143,7 @@ export default ({config, db, logger}) => {
   api.get('/places', cacheResponse(config.CACHE_DURATION_FLOODS_STATES),
     validate({
       query: {
-        admin: Joi.any().valid(config.REGION_CODES)
+        admin: Joi.any().valid(config.REGION_CODES),
       },
     }),
     (req, res, next) => {
@@ -187,6 +187,39 @@ export default ({config, db, logger}) => {
         next(err);
       })
   );
+
+    // Update the flood status of a local area by geomid
+    api.put('/geomid/:geomId',
+        validate({
+            params: {geomId: Joi.number().integer().required()},
+            body: Joi.object().keys({
+                state: Joi.number().integer()
+                    .valid(Object.keys(REM_STATES).map((state) => parseInt(state)))
+                    .required(),
+            }),
+            query: {
+                username: Joi.string().required(),
+            },
+        }),
+        (req, res, next) => floods(config, db, logger)
+            .placeByGeomId(req.params.geomId)
+            .then((data) => {
+                floods(config, db, logger).updateREMState(data[0].pkey, req.body.state, req.query.username)
+                        .then(() => {
+                            clearCache();
+                            res.status(200).json({geomId: req.params.geomId,
+                                state: req.body.state, updated: true});
+                        });
+            })
+
+            /* istanbul ignore next */
+            .catch((err) => {
+                /* istanbul ignore next */
+                logger.error(err);
+                /* istanbul ignore next */
+                next(err);
+            })
+    );
 
   // Remove the flood status of a local and add a log entry for audit
   api.delete('/:localAreaId', jwtCheck,

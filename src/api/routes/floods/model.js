@@ -49,7 +49,7 @@ export default (config, db, logger) => ({
       (SELECT local_area, state, last_updated FROM ${config.TABLE_REM_STATUS}
       WHERE state IS NOT NULL AND ($2 IS NULL OR state >= $2)) rs
       ON la.pkey = rs.local_area
-      WHERE ($1 IS NULL OR instance_region_code = $1) AND ($3 IS NULL OR parent_name = $3)` ;
+      WHERE ($1 IS NULL OR instance_region_code = $1) AND ($3 IS NULL OR parent_name = $3)`;
 
     // Setup values
     let values = [admin, minimumState, parent];
@@ -69,7 +69,7 @@ export default (config, db, logger) => ({
 
   // Get all places in a given admin boundary
 
-  allPlaces:(admin) => new Promise((resolve, reject) => {
+  allPlaces: (admin) => new Promise((resolve, reject) => {
     // Setup query
     let query = `SELECT pkey, attributes->>'District' as District, area_name as code, parent_name as Village, city_name as SubDistrict,
       instance_region_code 
@@ -91,6 +91,31 @@ export default (config, db, logger) => ({
         reject(err);
       });
   }),
+
+   // Get local area by geomid
+
+   placeByGeomId: (geomid) => new Promise((resolve, reject) => {
+     // Setup query
+     let query = `SELECT pkey, attributes->>'District' as District, area_name as code, parent_name, city_name,
+      instance_region_code 
+      FROM ${config.TABLE_LOCAL_AREAS}
+      WHERE ($1 IS NULL OR geom_id = $1)`;
+
+     // Setup values
+     let values = [geomid];
+
+     // Execute
+     logger.debug(query, values);
+     db.any(query, values).timeout(config.PGTIMEOUT)
+         .then((data) => {
+           resolve(data);
+         })
+         /* istanbul ignore next */
+         .catch((err) => {
+           /* istanbul ignore next */
+           reject(err);
+         });
+   }),
 
   // Update the REM state and append to the log
   updateREMState: (localAreaId, state, username) =>
