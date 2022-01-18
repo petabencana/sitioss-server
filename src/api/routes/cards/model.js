@@ -138,9 +138,21 @@ export default (config, db, logger) => ({
       ELSE null END AS report
       FROM ${config.TABLE_GRASP_CARDS} c
       LEFT JOIN ${config.TABLE_GRASP_REPORTS} r USING (card_id)
-      WHERE r.created_at >= to_timestamp($1) AND 
-      r.created_at <= to_timestamp($2)`;
-    let values = [(Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW, (Date.now() / 1000) - config.FLOOD_REPORTS_TIME_WINDOW + 1800];
+      WHERE ((r.disaster_type = 'flood' AND r.created_at >= to_timestamp($1) AND r.created_at <= to_timestamp($2) )
+      OR (r.disaster_type = 'earthquake' AND r.created_at >= to_timestamp($3) AND r.created_at <= to_timestamp($4) )
+      OR (r.disaster_type = 'wind' AND r.created_at >= to_timestamp($5) AND r.created_at <= to_timestamp($6) )
+      OR (r.disaster_type = 'haze' AND r.created_at >= to_timestamp($7) AND r.created_at <= to_timestamp($8) )
+      OR (r.disaster_type = 'volcano' AND r.created_at >= to_timestamp($9) AND r.created_at <= to_timestamp($10) )
+      OR (r.disaster_type = 'fire' AND r.created_at >= to_timestamp($11)) AND r.created_at <= to_timestamp($12) )`;
+    let now = Date.now() / 1000;
+    let values = [
+        now - config.FLOOD_REPORTS_TIME_WINDOW, now - config.FLOOD_REPORTS_TIME_WINDOW + 1800,
+        now - config.EQ_REPORTS_TIME_WINDOW, now - config.EQ_REPORTS_TIME_WINDOW + 1800,
+        now - config.HAZE_REPORTS_TIME_WINDOW, now - config.HAZE_REPORTS_TIME_WINDOW + 1800,
+        now - config.WIND_REPORTS_TIME_WINDOW, now - config.WIND_REPORTS_TIME_WINDOW + 1800,
+        now - config.VOLCANO_REPORTS_TIME_WINDOW, now - config.VOLCANO_REPORTS_TIME_WINDOW + 1800,
+        now - config.FIRE_REPORTS_TIME_WINDOW, now - config.FIRE_REPORTS_TIME_WINDOW + 1800,
+    ];
     // Execute
     logger.debug(query, values);
     db.any(query, values).timeout(config.PGTIMEOUT)
