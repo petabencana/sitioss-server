@@ -81,13 +81,14 @@ export default (config, db, logger) => ({
     let queries = [
       {
         query: `INSERT INTO ${config.TABLE_GRASP_REPORTS}
-          (card_id, card_data, text, created_at, disaster_type, status,
+          (card_id, card_data, text, created_at, disaster_type,
+            partner_code, status,
             the_geom)
-          VALUES ($1, $2, COALESCE($3,''), $4, $5, $6,
-          ST_SetSRID(ST_Point($7,$8),4326))`,
-        values: [card.card_id, body.card_data, body.text,
-          body.created_at, body.disaster_type, 'Confirmed', body.location.lng,
-          body.location.lat],
+          VALUES ($1, $2, COALESCE($3,''), $4, $5, $6, $7,
+          ST_SetSRID(ST_Point($8,$9),4326))`,
+        values: [card.card_id, body.card_data, body.text, body.created_at, body.disaster_type,
+          body.partnerCode, 'Confirmed',
+          body.location.lng, body.location.lat],
       },
       {
         query: `UPDATE ${config.TABLE_GRASP_CARDS}
@@ -148,8 +149,8 @@ export default (config, db, logger) => ({
     let values = [
         now - config.FLOOD_REPORTS_TIME_WINDOW, now - config.FLOOD_REPORTS_TIME_WINDOW + 1800,
         now - config.EQ_REPORTS_TIME_WINDOW, now - config.EQ_REPORTS_TIME_WINDOW + 1800,
-        now - config.HAZE_REPORTS_TIME_WINDOW, now - config.HAZE_REPORTS_TIME_WINDOW + 1800,
         now - config.WIND_REPORTS_TIME_WINDOW, now - config.WIND_REPORTS_TIME_WINDOW + 1800,
+        now - config.HAZE_REPORTS_TIME_WINDOW, now - config.HAZE_REPORTS_TIME_WINDOW + 1800,
         now - config.VOLCANO_REPORTS_TIME_WINDOW, now - config.VOLCANO_REPORTS_TIME_WINDOW + 1800,
         now - config.FIRE_REPORTS_TIME_WINDOW, now - config.FIRE_REPORTS_TIME_WINDOW + 1800,
     ];
