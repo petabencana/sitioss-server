@@ -82,6 +82,7 @@ export default {
   TABLE_GRASP_REPORTS: process.env.TABLE_GRASP_REPORTS || 'grasp.reports',
   TABLE_INSTANCE_REGIONS: process.env.TABLE_INSTANCE_REGIONS || 'cognicity.instance_regions',
   TABLE_LOCAL_AREAS: process.env.TABLE_LOCAL_AREAS || 'cognicity.local_areas',
+  TABLE_LOCAL_AREAS_RW: process.env.TABLE_LOCAL_AREAS || 'cognicity.local_areas_RW',
   TABLE_REM_STATUS: process.env.TABLE_REM_STATUS || 'cognicity.rem_status',
   TABLE_REM_STATUS_LOG: process.env.TABLE_REM_STATUS_LOG || 'cognicity.rem_status_log',
   TABLE_REPORTS: process.env.TABLE_REPORTS || 'cognicity.all_reports',
