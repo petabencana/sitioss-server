@@ -65,6 +65,34 @@ export default (config, db, logger) => ({
         /* istanbul ignore next */
         reject(err);
       });
+  });
+
+  allGeoRw: (admin, minimumState, parent) => new Promise((resolve, reject) => {
+    // Setup query
+    let query = `SELECT la.the_geom, la.pkey as area_id, la.geom_id,
+      la.area_name, la.parent_name, la.city_name, la.attributes,
+      rs.state, rs.last_updated
+      FROM ${config.TABLE_LOCAL_AREAS_RW} la
+      ${minimumState ? 'JOIN' : 'LEFT JOIN'}
+      (SELECT local_area, state, last_updated FROM ${config.TABLE_REM_STATUS}
+      WHERE state IS NOT NULL AND ($2 IS NULL OR state >= $2)) rs
+      ON la.pkey = rs.local_area
+      WHERE ($1 IS NULL OR instance_region_code = $1) AND ($3 IS NULL OR parent_name = $3)`;
+
+    // Setup values
+    let values = [admin, minimumState, parent];
+
+    // Execute
+    logger.debug(query, values);
+    db.any(query, values).timeout(config.PGTIMEOUT)
+      .then((data) => {
+        resolve(data);
+      })
+      /* istanbul ignore next */
+      .catch((err) => {
+        /* istanbul ignore next */
+        reject(err);
+      });
   }),
 
   // Get all places in a given admin boundary
