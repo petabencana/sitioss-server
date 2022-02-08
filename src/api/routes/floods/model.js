@@ -65,7 +65,7 @@ export default (config, db, logger) => ({
         /* istanbul ignore next */
         reject(err);
       });
-  });
+  }),
 
   allGeoRw: (admin, minimumState, parent) => new Promise((resolve, reject) => {
     // Setup query
