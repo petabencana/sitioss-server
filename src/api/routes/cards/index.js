@@ -139,6 +139,7 @@ export default ({config, db, logger}) => {
     params: {cardId: Joi.string().min(36).max(36).required()},
     body: Joi.object().keys({
       disaster_type: Joi.string().valid(config.DISASTER_TYPES).required(),
+      partnerCode: Joi.string().allow('').allow(null).default(''),
       tweetID: Joi.string(),
       sub_submission: Joi.bool().required(),
       // .when('disaster_type', {

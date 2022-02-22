@@ -14,11 +14,10 @@
  */
 export default (config, db, logger) => ({
   all: (timeperiod, admin, disasterType) => new Promise((resolve, reject) => {
-
     // Setup query
     let query = `SELECT pkey, created_at, source,
       status, url, image_url, disaster_type, report_data, tags, title, text,
-      the_geom FROM ${config.TABLE_REPORTS}
+      the_geom, partner_code FROM ${config.TABLE_REPORTS}
       WHERE ((disaster_type = 'flood' AND created_at >= to_timestamp($1)) 
       OR (disaster_type = 'earthquake' AND created_at >= to_timestamp($2))
       OR (disaster_type = 'wind' AND created_at >= to_timestamp($3))
