@@ -4,39 +4,42 @@
  * @author Urban Risk Lab, 2017
  **/
 // Import express, fs and http
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 // Import config
-import config from './config';
+import config from "./config";
 
 // Import DB initializer
-import initializeDb from './db';
+import initializeDb from "./db";
 
 // Import the routes
-import routes from './api';
+import routes from "./api";
 
 // Import server
-import {init} from './server.js';
+import { init } from "./server.js";
 
 // Import logging libraries
-import logger from 'winston'; // Application logging
+import logger from "winston"; // Application logging
 
 // Set the default logging level
 logger.level = config.LOG_LEVEL;
 
 // Check that log file directory can be written to
 try {
-  if (config.LOG_DIR !== '') {
+  if (config.LOG_DIR !== "") {
     fs.accessSync(config.LOG_DIR, fs.W_OK);
   }
-  logger.info(`Logging to ${config.LOG_DIR !== '' ? config.LOG_DIR :
-              'current working directory' }`);
+  logger.info(
+    `Logging to ${
+      config.LOG_DIR !== "" ? config.LOG_DIR : "current working directory"
+    }`
+  );
 } catch (e) {
   // If we cannot write to the desired directory then log tocurrent directory
   logger.info(`Cannot log to '${config.LOG_DIR}',
               logging to current working directory instead`);
-  config.LOG_DIR = '';
+  config.LOG_DIR = "";
 }
 
 // Configure the logger
@@ -50,7 +53,7 @@ logger.add(logger.transports.File, {
 });
 
 // If we are not in development and console logging not requested then remove it
-if (config.NODE_ENV !== 'development' && !config.LOG_CONSOLE) {
+if (config.NODE_ENV !== "development" && !config.LOG_CONSOLE) {
   logger.remove(logger.transports.Console);
 }
 
@@ -62,24 +65,27 @@ const exitWithStatus = (status) => {
 
 // Catch kill and interrupt signals and log a clean exit status
 process
-  .on('SIGTERM', () => {
-    logger.info('SIGTERM: Application shutting down');
+  .on("SIGTERM", () => {
+    logger.info("SIGTERM: Application shutting down");
     exitWithStatus(0);
   })
-  .on('SIGINT', () => {
-    logger.info('SIGINT: Application shutting down');
+  .on("SIGINT", () => {
+    logger.info("SIGINT: Application shutting down");
     exitWithStatus(0);
   });
 
 // Try and start the server
-init(config, initializeDb, routes, logger).then((app) => {
-  // All good to go, start listening for requests
-  app.server.listen(config.PORT);
-  logger.info(`Application started,`
-    + `listening on port ${app.server.address().port}`);
-}).catch((err) => {
-  // Error has occurred, log and shutdown
-  logger.error('Error starting server: ' + err.message + ', ' + err.stack);
-  logger.error('Fatal error: Application shutting down');
-  exitWithStatus(1);
-});
+init(config, initializeDb, routes, logger)
+  .then((app) => {
+    // All good to go, start listening for requests
+    app.server.listen(config.PORT);
+    logger.info(
+      `Application started,` + `listening on port ${app.server.address().port}`
+    );
+  })
+  .catch((err) => {
+    // Error has occurred, log and shutdown
+    logger.error("Error starting server: " + err.message + ", " + err.stack);
+    logger.error("Fatal error: Application shutting down");
+    exitWithStatus(1);
+  });
