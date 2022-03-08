@@ -46,6 +46,9 @@ export default ({ config, db, logger }) => {
       key: function (req, file, cb) {
         cb(null, req.body.partner_code + "_" + file.originalname);
       },
+      contentType: function (req, file, cb) {
+        cb(null, file.mimetype);
+      },
     }),
   });
 
