@@ -285,7 +285,7 @@ export default ({config, db, logger}) => {
   );
 
   // Remove the flood status of a local and add a log entry for audit
-  api.delete('/:localAreaId', jwtCheck,
+  api.delete('/:localAreaId',
     validate({
       params: {localAreaId: Joi.number().integer().required()},
       query: {
