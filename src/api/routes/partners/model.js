@@ -54,6 +54,29 @@ export default (config, db, logger) => ({
         });
     }),
 
+  getById: (value) =>
+    new Promise((resolve, reject) => {
+      // Setup query
+      let id = value.id;
+
+      const query = `SELECT * FROM ${config.TABLE_COGNICITY_PARTNERS}
+        WHERE id = $1`;
+      const values = [id];
+
+      // Execute
+      logger.debug(query, values);
+      db.any(query, values)
+        .timeout(config.PGTIMEOUT)
+        .then((data) => {
+          resolve(data);
+        })
+        /* istanbul ignore next */
+        .catch((err) => {
+          /* istanbul ignore next */
+          reject(err);
+        });
+    }),
+
   getByCode: (value) =>
     new Promise((resolve, reject) => {
       // Setup query

@@ -187,9 +187,9 @@ export default ({ config, db, logger }) => {
       });
   });
 
-  const getAndDeleteObject = (requestBody) => {
+  const getAndDeleteObject = (requestBody, params) => {
     partners(config, db, logger)
-      .getByCode(requestBody)
+      .getById(params)
       .then((data) => {
         let splitingUrl = data[0]["partner_icon"].split("?");
 
@@ -240,7 +240,7 @@ export default ({ config, db, logger }) => {
 
     // Deleting existing s3 Object
 
-    getAndDeleteObject(body);
+    getAndDeleteObject(body, req.params);
     let s3params = {
       Bucket: config.PARTNER_IMAGES_BUCKET,
       Key: key,
