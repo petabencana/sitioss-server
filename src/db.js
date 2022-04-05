@@ -21,14 +21,14 @@ const pgp = require("pg-promise")({
 export default (config, logger) =>
   new Promise((resolve, reject) => {
     // Build the connection string
-    // const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
-    const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}`;
-    
+    const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
+    // const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}`;
+
     logger.debug(cn);
 
     // Setup the connection
     let db = pgp(cn);
-    resolve(db);
+    // resolve(db);
     // Make sure we can connect, if so resolve, if not reject
     db.proc("version")
       .timeout(config.PGTIMEOUT)
