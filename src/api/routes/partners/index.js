@@ -49,7 +49,9 @@ export default ({ config, db, logger }) => {
       contentType: function (req, file, cb) {
         cb(null, file.mimetype);
       },
-      contentEncoding: "base64",
+      contentEncoding: function (req, file, cb) {
+        cb(null, file.encoding);
+      },
     }),
   });
 
