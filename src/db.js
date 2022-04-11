@@ -3,10 +3,10 @@
  * @module db
  * Database initializer
  **/
-import Promise from 'bluebird';
+import Promise from "bluebird";
 
 // Import DB library
-const pgp = require('pg-promise')({
+const pgp = require("pg-promise")({
   // Initialization Options
   promiseLib: Promise, // Use bluebird for enhanced Promises
 });
@@ -18,19 +18,23 @@ const pgp = require('pg-promise')({
  * @param {Object} logger - logger
  * @return {Object} db - PG Promise database
  **/
-export default (config, logger) => new Promise((resolve, reject) => {
-  // Build the connection string
-  const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
-  logger.debug(cn);
+export default (config, logger) =>
+  new Promise((resolve, reject) => {
+    // Build the connection string
+    const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
+    // const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}`;
 
-  // Setup the connection
-  let db = pgp(cn);
+    logger.debug(cn);
 
-  // Make sure we can connect, if so resolve, if not reject
-  db.proc('version').timeout(config.PGTIMEOUT)
-    .then(() => resolve(db))
-    .catch((err) => {
-      logger.error(err);
-      reject(err);
-    });
-});
+    // Setup the connection
+    let db = pgp(cn);
+    // resolve(db);
+    // Make sure we can connect, if so resolve, if not reject
+    db.proc("version")
+      .timeout(config.PGTIMEOUT)
+      .then(() => resolve(db))
+      .catch((err) => {
+        logger.error(err);
+        reject(err);
+      });
+  });

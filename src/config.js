@@ -49,6 +49,7 @@ export default {
   GEO_FORMATS: (process.env.GEO_FORMATS || 'geojson,topojson').split(','),
   GEO_PRECISION: process.env.GEO_PRECISION || 10,
   IMAGES_BUCKET: process.env.IMAGES_BUCKET || 'petabencana-image-uploads',
+  PARTNER_IMAGES_BUCKET: process.env.PARTNER_IMAGES_BUCKET || 'petabencana-partner-images',
   IMAGES_HOST: process.env.IMAGES_HOST || 'images.petabencana.id',
   IMAGE_MIME_TYPES: (process.env.IMAGE_MIME_TYPES || 'image/png,image/jpeg,image/gif').split(','),
   INFRASTRUCTURE_TYPES: (process.env.INFRASTRUCTURE_TYPES || 'basins,floodgates,pumps,sites,waterways').split(','),
@@ -87,4 +88,6 @@ export default {
   TABLE_REM_STATUS_LOG: process.env.TABLE_REM_STATUS_LOG || 'cognicity.rem_status_log',
   TABLE_REPORTS: process.env.TABLE_REPORTS || 'cognicity.all_reports',
   TABLE_REPORTS_POINTS_LOG: process.env.TABLE_REPORTS_LOG || 'cognicity.reports_points_log',
+  TABLE_COGNICITY_PARTNERS: process.env.TABLE_COGNICITY_PARTNERS || 'cognicity.partners',
+
 };
