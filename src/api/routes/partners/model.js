@@ -22,13 +22,22 @@ export default (config, db, logger) => ({
       VALUES ($1, $2, $3)`;
 
       // Setup values
-      let values = [body.partner_code, body.partner_name, body.partner_icon];
+      let values = [
+        body.partner_code.toLowerCase(),
+        body.partner_name,
+        body.partner_icon,
+      ];
 
       // Execute
       logger.debug(query, values);
       db.oneOrNone(query, values)
         .timeout(config.PGTIMEOUT)
-        .then(() => resolve({ partner_code: body.partner_code, created: true }))
+        .then(() =>
+          resolve({
+            partner_code: body.partner_code.toLowerCase(),
+            created: true,
+          })
+        )
         .catch((err) => {
           reject(err);
         });
@@ -104,7 +113,9 @@ export default (config, db, logger) => ({
     new Promise((resolve, reject) => {
       // Setup query
       let partner_name = data.partner_name ? data.partner_name : null;
-      let partner_code = data.partner_code ? data.partner_code : null;
+      let partner_code = data.partner_code
+        ? data.partner_code.toLowerCase()
+        : null;
       let partner_status =
         data.partner_status !== undefined ? data.partner_status : null;
       let partner_icon = data.partner_icon ? data.partner_icon : null;
