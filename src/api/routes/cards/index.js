@@ -150,7 +150,7 @@ export default ({ config, db, logger }) => {
       body: Joi.object().keys({
         disaster_type: Joi.string().valid(config.DISASTER_TYPES).required(),
         partnerCode: Joi.string().allow("").allow(null).default(""),
-        tweetID: Joi.string(),
+        tweetID: Joi.string().allow('').default(''),
         sub_submission: Joi.bool().required(),
         // .when('disaster_type', {
         //   is: 'earthquake',
