@@ -139,8 +139,8 @@ export default (config, db, logger) => ({
         .timeout(config.PGTIMEOUT)
         // return result from push function query
         .then((data) => {
-          const notifyData = JSON.parse(data[3].notify);
-          notifyData.tweetID = body.tweetID;
+          const notifyData = JSON.parse(data[3].notify) || {};
+          notifyData.tweetID = body.tweetID || '';
           resolve(notifyData);
         })
         /* istanbul ignore next */
