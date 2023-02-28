@@ -37,12 +37,12 @@ module.exports = class Cap {
     let self = this;
     let feed = {
       '@xmlns': 'http://www.w3.org/2005/Atom',
-      'id': 'https://data.petabencana.id/floods',
-      'title': 'petabencana.id Flood Affected Areas',
-      'updated': moment().tz('Asia/Jakarta').format(),
+      'id': 'https://data.mapakalamidad.ph/floods',
+      'title': 'mapakalamidad.ph Flood Affected Areas',
+      'updated': moment().tz('Asia/Manila').format(),
       'author': {
-        name: 'petabencana.id',
-        uri: 'https://petabencana.id/',
+        name: 'mapakalamidad.ph',
+        uri: 'https://mapakalamidad.ph/',
       },
     };
 
@@ -59,15 +59,15 @@ module.exports = class Cap {
         // Note, this ID does not resolve to a real resource
         // - but enough information is contained in the URL
         // that we could resolve the flooded report at the same point in time
-        id: 'https://data.petabencana.id/floods?parent_name='
+        id: 'https://data.mapakalamidad.id/floods?parent_name='
         +encodeURI(feature.properties.parent_name)
         +'&area_name='
         +encodeURI(feature.properties.area_name)
         +'&time='
-        +encodeURI(moment.tz(feature.properties.last_updated, 'Asia/Jakarta'
+        +encodeURI(moment.tz(feature.properties.last_updated, 'Asia/Manila'
                     ).format('YYYY-MM-DDTHH:mm:ssZ')),
         title: alert.identifier + ' Flood Affected Area',
-        updated: moment.tz(feature.properties.last_updated, 'Asia/Jakarta'
+        updated: moment.tz(feature.properties.last_updated, 'Asia/Manila'
                     ).format('YYYY-MM-DDTHH:mm:ssZ'),
         content: {
           '@type': 'text/xml',
@@ -93,8 +93,8 @@ module.exports = class Cap {
       'title': 'Disaster Reports in Philippines',
       'updated': moment().tz('Asia/Manila').format(),
       'author': {
-        name: 'mapakalamidad.id',
-        uri: 'https://mapakalamidad.id/',
+        name: 'mapakalamidad.ph',
+        uri: 'https://mapakalamidad.ph/',
       },
     };
 
@@ -113,8 +113,8 @@ module.exports = class Cap {
         // - but enough information is contained in the URL
         // that we could resolve the flooded report at the same point in time
         id:  feature.properties.pkey,
-        title: alert.identifier + ' Disasters in Indonesia',
-        updated: moment.tz(feature.properties.created_at, 'Asia/Jakarta'
+        title: alert.identifier + ' Disasters in Philippines',
+        updated: moment.tz(feature.properties.created_at, 'Asia/Manila'
         ).format('YYYY-MM-DDTHH:mm:ssZ'),
         content: {
           '@type': 'text/xml',
@@ -143,7 +143,7 @@ module.exports = class Cap {
 
     let identifier = feature.properties.parent_name + '.'
       + feature.properties.area_name + '.'
-      + moment.tz(feature.properties.last_updated, 'Asia/Jakarta'
+      + moment.tz(feature.properties.last_updated, 'Asia/Manila'
         ).format('YYYY-MM-DDTHH:mm:ssZ');
     identifier = identifier.replace(/ /g, '_');
     alert.identifier = encodeURI(identifier);
@@ -181,7 +181,7 @@ module.exports = class Cap {
 
     let identifier = feature.properties.pkey + '.'
       + feature.properties.source + '.'
-      + moment.tz(feature.properties.created_at, 'Asia/Jakarta'
+      + moment.tz(feature.properties.created_at, 'Asia/Manila'
       ).format('YYYY-MM-DDTHH:mm:ssZ');
     identifier = identifier.replace(/ /g, '_');
     alert.identifier = encodeURI(identifier);
@@ -258,7 +258,7 @@ module.exports = class Cap {
                         + ' THE JAKARTA EMERGENCY MANAGEMENT AGENCY OBSERVED '
                         + levelDescription + ' IN ' + descriptionArea + '.';
 
-    info.web = 'https://petabencana.id/';
+    info.web = 'https://mapakalamidad.ph/';
 
     info.area = self.createArea( feature );
     // If area creation failed, don't create the info
@@ -298,7 +298,7 @@ module.exports = class Cap {
     info.senderName = feature.properties.source;
     info.headline = 'DISASTER WARNING';
     info.description = encodeURI(feature.properties.text || "");
-    info.web = 'https://data.petabencana.id/reports?admin=' + encodeURI(feature.properties.tags.instance_region_code) + '&amp;disaster=' + encodeURI(feature.properties.disaster_type);
+    info.web = 'https://data.mapakalamidad.ph/reports?admin=' + encodeURI(feature.properties.tags.instance_region_code) + '&amp;disaster=' + encodeURI(feature.properties.disaster_type);
 
     info.parameter = [];
     let report_data = feature.properties.report_data || {};
