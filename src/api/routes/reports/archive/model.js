@@ -15,12 +15,12 @@ import Promise from 'bluebird';
 export default (config, db, logger) => ({
   all: (start, end, admin) => new Promise((resolve, reject) => {
     // Setup query
-    let query = `SELECT pkey, created_at, source,
-      status, url, image_url, disaster_type, report_data, tags, title, text,
-      the_geom FROM ${config.TABLE_REPORTS}
-      WHERE created_at >= $1::timestamp with time zone
-      AND created_at <= $2::timestamp with time zone
-      AND ($3 IS NULL OR tags->>'instance_region_code'=$3)
+     let query = `SELECT pkey, created_at, source, status, url, image_url, disaster_type, report_data, tags, title, text, the_geom , 
+     ${config.TABLE_COGNICITY_PARTNERS}.partner_code ,
+     ${config.TABLE_COGNICITY_PARTNERS}.partner_icon FROM ${config.TABLE_REPORTS}
+      LEFT JOIN ${config.TABLE_COGNICITY_PARTNERS} 
+      ON ${config.TABLE_REPORTS}.partner_code=${config.TABLE_COGNICITY_PARTNERS}.partner_code
+      WHERE created_at >= $1 AND created_at <= $2 AND ($3 IS NULL OR tags->>'instance_region_code'=$3)
       ORDER BY created_at DESC LIMIT $4`;
 
     // var timeWindow = (Date.now() / 1000) - timeperiod;
