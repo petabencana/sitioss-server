@@ -8,13 +8,15 @@ import {Router} from 'express';
 import archive from './model';
 
 // Import any required utility functions
-import {cacheResponse, handleGeoResponse} from '../../../../lib/util';
+import {cacheResponse, handleGeoCapResponse} from '../../../../lib/util';
 
 // Import validation dependencies
 import BaseJoi from 'joi';
 import Extension from 'joi-date-extensions';
 const Joi = BaseJoi.extend(Extension);
 import validate from 'celebrate';
+import Cap from '../../../../lib/cap';
+
 /**
  * Methods to get historic flood reports from database
  * @alias module:src/api/reports/archive/index
@@ -25,6 +27,7 @@ import validate from 'celebrate';
  */
 export default ({config, db, logger}) => {
   let api = Router(); // eslint-disable-line new-cap
+  const cap = new Cap(config, logger); // Setup our cap formatter
 
   // Get a list of all reports
   api.get('/', cacheResponse('1 minute'),
@@ -35,7 +38,7 @@ export default ({config, db, logger}) => {
         start: Joi.date().format('YYYY-MM-DDTHH:mm:ssZ').required(),
         end: Joi.date().format('YYYY-MM-DDTHH:mm:ssZ')
           .min(Joi.ref('start')).required(),
-        geoformat: Joi.any().valid(config.GEO_FORMATS)
+          geoformat: Joi.any().valid(['cap'].concat(config.GEO_FORMATS))
           .default(config.GEO_FORMAT_DEFAULT),
       },
     }),
@@ -58,7 +61,7 @@ export default ({config, db, logger}) => {
       }
       archive(config, db, logger)
       .all(req.query.start, req.query.end, req.query.admin)
-      .then((data) => handleGeoResponse(data, req, res, next))
+      .then((data) => handleGeoCapResponse(data, req, res, cap, next))
       .catch((err) => {
         /* istanbul ignore next */
         logger.error(err);
