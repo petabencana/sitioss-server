@@ -4,12 +4,12 @@ DOI for current [stable release] (https://github.com/urbanriskmap/cognicity-serv
 
 
 [![DOI](https://zenodo.org/badge/73803254.svg)](https://zenodo.org/badge/latestdoi/73803254)
-## cognicity-server
-API Server for CogniCity
+## sitioss-server
+API Server for Siti OSS
 
 ### Summary
 
-This is the NodeJS server which runs the CogniCity Data API used by Urban Risk Map instances, such as [PetaBencana.id](https://petabencana.id) site.  
+This is the NodeJS server which runs the Siti OSS Data API used by Disaster Map instances, such as [PetaBencana.id](https://petabencana.id) site.  
 
 ### Run
 ES6 Support is provided by Babel.
