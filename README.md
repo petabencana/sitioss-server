@@ -1,9 +1,4 @@
-[![Build Status](https://travis-ci.org/urbanriskmap/cognicity-server.svg?branch=master)](https://travis-ci.org/urbanriskmap/cognicity-server) [![Coverage Status](https://coveralls.io/repos/github/urbanriskmap/cognicity-server/badge.svg?branch=master)](https://coveralls.io/github/urbanriskmap/cognicity-server?branch=master)
 
-DOI for current [stable release] (https://github.com/urbanriskmap/cognicity-server/releases)
-
-
-[![DOI](https://zenodo.org/badge/73803254.svg)](https://zenodo.org/badge/latestdoi/73803254)
 ## sitioss-server
 API Server for Siti OSS
 
@@ -100,15 +95,8 @@ A few points to note on config:
 ### Building
 Run `npm run -s build` to build.
 
-### Testing
-Testing is run by [Travis](https://travis-ci.org/urbanriskmap/cognicity-server). ESLint runs to check syntax. Integration tests, formed by chaining unit tests, are used to check the API.  Coverage is provided by Istanbul and [Coveralls](https://coveralls.io/github/urbanriskmap/cognicity-server). See src/test/ for scripts. Beware that integration tests may pollute tables (e.g. user tables in feeds), it is not recommended to run tests against prod databases with live data. The default database (used for testing) is cognicity. Travis-ci creates a new schema instance for testing using https://github.com/urbanriskmap/cognicity-schema, see the .travis.yml file for more details.
-
-To run tests locally a new database "cognicity_server_testing" is required on localhost.
-
-Code follows the [Google JavaScript style](https://google.github.io/styleguide/jsguide.html).ESLint is run with tests to enfoce style.
-
 ### Issue Tracking
-Issues are tracked using [GitHub](https://github.com/urbanriskmap/cognicity-server/issues)
+Issues are tracked using [GitHub]
 
 ### Code documentation
 
@@ -117,8 +105,6 @@ in the  jsdoc/ folder. To build documentation do:
 ```sh
 npm run jsdoc
 ```
-
-Docs are hosted at https://urbanriskmap.github.io/cognicity-server/jsdoc/
 
 ### Package management
 Before deployment:
@@ -136,7 +122,7 @@ The release procedure is as follows:
 * Further development is now on the updated version number until the release process begins again.
 
 ### API Notes
-Full API documentation at https://docs.petabencana.id. This documentation is stored in the [petabencana-docs](https://github.com/urbanriskmap/petabencana-docs) repository.
+Full API documentation at https://docs.petabencana.id. This documentation is stored in the https://docs.petabencana.id/master-1 repository.
 
 The swagger files under [/apigw](apigw/) describe the API in [swagger](https://swagger.io/) format (with AWS API Gateway extensions) for each of our deployments. For a new or updated deployment, the references to the (Elastic Beanstalk) hostnames and Lambda Amazon Resource Names will need to be updated first before import, and then permissions to trigger Lambdas granted to the API.
 
