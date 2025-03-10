@@ -29,12 +29,8 @@ You should have received a copy of the GNU General Public License along with thi
 ### Contributors
 **Concept Contributors:**
 - Nashin Mahtani
-- Adhitya Dido
-- Reynald
 - Santi Adhiatmi
-- Jessica Vianto
-- Alvin Gus A Wahid
-- Anarita Widyaningrum
+- Elton Evidente
 
 **Code Contributors:**
 - Deepthi Chand
