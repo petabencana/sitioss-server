@@ -1,5 +1,6 @@
-:no_entry: [DEPRECATED]
-This repository is depricated in favor of more robust and scalable serverless architecture
+:no_entry: # [DEPRECATED]
+
+This repository is deprecated in favor of a more robust and scalable serverless architecture
 
 ## sitioss-server
 API Server for Siti OSS
